@@ -1,23 +1,89 @@
-import { useAssets, useDeleteAsset } from '../hooks/useAssets'
-import type { Asset } from '../hooks/useAssets'
+import React, { useState } from 'react'
+import { useAssets, useCreateAsset, useUpdateAsset, useDeleteAsset } from '../hooks/useAssets'
 
-// Temporary planner ID for development - in real app this would come from context/auth
-const TEMP_PLANNER_ID = "550e8400-e29b-41d4-a716-446655440000"
+// Define types locally to avoid import issues
+interface Asset {
+  id: string;
+  planner_id: string;
+  name: string;
+  include_toggle: 'on' | 'off';
+  scenario: 'ALL' | 'A' | 'B' | 'C';
+  sale_value: number;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+}
 
-export default function AssetsTable() {
-  const { data: assets, isLoading, error } = useAssets(TEMP_PLANNER_ID)
-  const deleteAssetMutation = useDeleteAsset()
+interface AssetCreate {
+  planner_id: string;
+  name: string;
+  include_toggle: 'on' | 'off';
+  scenario: 'ALL' | 'A' | 'B' | 'C';
+  sale_value: number;
+  notes?: string;
+}
 
-  const handleDeleteAsset = async (assetId: string) => {
+interface AssetsTableProps {
+  plannerId: string;
+  scenario?: string;
+}
+
+export default function AssetsTable({ plannerId, scenario = 'ALL' }: AssetsTableProps) {
+  const [isAdding, setIsAdding] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [formData, setFormData] = useState<Partial<AssetCreate>>({
+    name: '', include_toggle: 'on', scenario: 'ALL', sale_value: 0, notes: ''
+  });
+
+  const { data: assets, isLoading, error } = useAssets(plannerId, scenario);
+  const createAsset = useCreateAsset();
+  const updateAsset = useUpdateAsset();
+  const deleteAsset = useDeleteAsset();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name || formData.sale_value === undefined) return;
+
+    try {
+      if (editingId) {
+        await updateAsset.mutateAsync({ id: editingId, ...formData });
+        setEditingId(null);
+      } else {
+        await createAsset.mutateAsync({ ...formData, planner_id: plannerId } as AssetCreate);
+        setIsAdding(false);
+      }
+      setFormData({ name: '', include_toggle: 'on', scenario: 'ALL', sale_value: 0, notes: '' });
+    } catch (error) {
+      console.error('Error saving asset:', error);
+    }
+  };
+
+  const handleEdit = (asset: Asset) => {
+    setEditingId(asset.id);
+    setFormData({
+      name: asset.name,
+      include_toggle: asset.include_toggle,
+      scenario: asset.scenario,
+      sale_value: asset.sale_value,
+      notes: asset.notes
+    });
+  };
+
+  const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this asset?')) {
       try {
-        await deleteAssetMutation.mutateAsync(assetId)
+        await deleteAsset.mutateAsync(id);
       } catch (error) {
-        console.error('Error deleting asset:', error)
-        alert('Failed to delete asset. Please try again.')
+        console.error('Error deleting asset:', error);
       }
     }
-  }
+  };
+
+  const handleCancel = () => {
+    setIsAdding(false);
+    setEditingId(null);
+    setFormData({ name: '', include_toggle: 'on', scenario: 'ALL', sale_value: 0, notes: '' });
+  };
 
   if (isLoading) {
     return (
@@ -112,16 +178,100 @@ export default function AssetsTable() {
           </p>
         </div>
         <div className="flex space-x-3">
-          <button className="btn-secondary">
-            <span className="mr-2">🔍</span>
-            Filter
-          </button>
-          <button className="btn-primary">
-            <span className="mr-2">➕</span>
-            Add Asset
-          </button>
+          {!isAdding && !editingId && (
+            <button 
+              className="btn-primary"
+              onClick={() => setIsAdding(true)}
+            >
+              <span className="mr-2">➕</span>
+              Add Asset
+            </button>
+          )}
         </div>
       </div>
+
+      {/* Add/Edit Form */}
+      {(isAdding || editingId) && (
+        <form onSubmit={handleSubmit} className="bg-gray-50 p-4 rounded-lg">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+              <input
+                type="text"
+                value={formData.name || ''}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Sale Value</label>
+              <input
+                type="number"
+                step="0.01"
+                value={formData.sale_value || ''}
+                onChange={(e) => setFormData({ ...formData, sale_value: parseFloat(e.target.value) || 0 })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Include</label>
+              <select
+                value={formData.include_toggle || 'on'}
+                onChange={(e) => setFormData({ ...formData, include_toggle: e.target.value as 'on' | 'off' })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="on">On</option>
+                <option value="off">Off</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Scenario</label>
+              <select
+                value={formData.scenario || 'ALL'}
+                onChange={(e) => setFormData({ ...formData, scenario: e.target.value as 'ALL' | 'A' | 'B' | 'C' })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="ALL">All Scenarios</option>
+                <option value="A">Scenario A</option>
+                <option value="B">Scenario B</option>
+                <option value="C">Scenario C</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+            <textarea
+              value={formData.notes || ''}
+              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              rows={2}
+            />
+          </div>
+
+          <div className="flex gap-2 mt-4">
+            <button
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+              disabled={createAsset.isPending || updateAsset.isPending}
+            >
+              {createAsset.isPending || updateAsset.isPending ? 'Saving...' : (editingId ? 'Update' : 'Add')}
+            </button>
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
 
       {/* Table */}
       <div className="table-container">
@@ -167,13 +317,16 @@ export default function AssetsTable() {
                   </td>
                   <td className="table-cell">
                     <div className="flex space-x-2">
-                      <button className="text-blue-600 hover:text-blue-900 transition-colors duration-200">
+                      <button 
+                        className="text-blue-600 hover:text-blue-900 transition-colors duration-200"
+                        onClick={() => handleEdit(asset)}
+                      >
                         <span className="text-lg">✏️</span>
                       </button>
                       <button 
                         className="text-red-600 hover:text-red-900 transition-colors duration-200"
-                        onClick={() => handleDeleteAsset(asset.id)}
-                        disabled={deleteAssetMutation.isPending}
+                        onClick={() => handleDelete(asset.id)}
+                        disabled={deleteAsset.isPending}
                       >
                         <span className="text-lg">🗑️</span>
                       </button>

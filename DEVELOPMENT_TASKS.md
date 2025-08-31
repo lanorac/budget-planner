@@ -128,13 +128,21 @@ A comprehensive budget planning and scenario simulation web application with rea
 - [x] Modern UI with Tailwind CSS
 
 ### Remaining Components
-- [ ] Liabilities Table
-- [ ] Income Table
-- [ ] Expenses Table
+- [x] Assets Table
+- [x] Liabilities Table
+- [x] Income Table
+- [x] Expenses Table
 - [ ] Bills Table
 - [ ] Categories Management
 - [ ] Scenario Selection
 - [ ] Settings Panel
+
+### Recent Improvements ✅
+- [x] Fixed UUID format mismatch in KPI calculations (hyphens vs no hyphens)
+- [x] Added dedicated "Monthly Liabilities" KPI card for better financial overview
+- [x] Improved KPI card layout (vertical stacking) for better readability with 5 cards
+- [x] Fixed column name mismatches in EffectiveStatusService SQL queries
+- [x] Resolved expenses field name conflicts (linked_liab_id vs linked_liability_id)
 
 ## Phase 3: Advanced Features
 
@@ -182,9 +190,12 @@ A comprehensive budget planning and scenario simulation web application with rea
 - **Database**: SQLite with sample data loaded
 - **API Integration**: Fully functional with real-time data
 - **UI**: Beautiful modern interface with glass morphism effects
+- **KPI Dashboard**: Complete financial overview with 5 key metrics
+- **CRUD Operations**: All major tables (Assets, Liabilities, Income, Expenses) fully functional
 
 ## Next Steps
-1. Complete remaining table components (Liabilities, Income, Expenses, Bills)
-2. Implement scenario management features
-3. Add advanced analytics and reporting
-4. Prepare for production deployment
+1. Complete Bills Table component
+2. Implement Categories Management
+3. Add scenario management features
+4. Add advanced analytics and reporting
+5. Prepare for production deployment

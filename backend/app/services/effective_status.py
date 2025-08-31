@@ -18,9 +18,8 @@ class EffectiveStatusService:
                 l.name,
                 l.include_toggle,
                 l.scenario,
-                l.monthly_payment,
-                l.remaining_balance,
-                l.interest_rate,
+                l.monthly_cost,
+                l.principal,
                 l.notes,
                 l.planner_id,
                 l.created_at,
@@ -37,7 +36,7 @@ class EffectiveStatusService:
             AND (l.scenario = :scenario OR :scenario = 'ALL')
         """)
         
-        result = db.execute(query, {"planner_id": str(planner_id), "scenario": scenario})
+        result = db.execute(query, {"planner_id": str(planner_id).replace('-', ''), "scenario": scenario})
         return [dict(row._mapping) for row in result]
     
     @staticmethod
@@ -68,12 +67,12 @@ class EffectiveStatusService:
                 END as effective_status
             FROM expenses e
             LEFT JOIN assets a ON e.linked_asset_id = a.id
-            LEFT JOIN liabilities l ON e.linked_liability_id = l.id
+            LEFT JOIN liabilities l ON e.linked_liab_id = l.id
             WHERE e.planner_id = :planner_id
             AND (e.scenario = :scenario OR :scenario = 'ALL')
         """)
         
-        result = db.execute(query, {"planner_id": str(planner_id), "scenario": scenario})
+        result = db.execute(query, {"planner_id": str(planner_id).replace('-', ''), "scenario": scenario})
         return [dict(row._mapping) for row in result]
     
     @staticmethod
@@ -104,12 +103,12 @@ class EffectiveStatusService:
                 END as effective_status
             FROM bills b
             LEFT JOIN assets a ON b.linked_asset_id = a.id
-            LEFT JOIN liabilities l ON b.linked_liability_id = l.id
+            LEFT JOIN liabilities l ON b.linked_liab_id = l.id
             WHERE b.planner_id = :planner_id
             AND (b.scenario = :scenario OR :scenario = 'ALL')
         """)
         
-        result = db.execute(query, {"planner_id": str(planner_id), "scenario": scenario})
+        result = db.execute(query, {"planner_id": str(planner_id).replace('-', ''), "scenario": scenario})
         return [dict(row._mapping) for row in result]
     
     @staticmethod
@@ -183,7 +182,7 @@ class EffectiveStatusService:
             AND (scenario = :scenario OR :scenario = 'ALL')
         """)
         
-        params = {"planner_id": str(planner_id), "scenario": scenario}
+        params = {"planner_id": str(planner_id).replace('-', ''), "scenario": scenario}
         
         income_result = db.execute(income_query, params).fetchone()
         expenses_result = db.execute(expenses_query, params).fetchone()
@@ -191,11 +190,11 @@ class EffectiveStatusService:
         liabilities_result = db.execute(liabilities_query, params).fetchone()
         asset_sales_result = db.execute(asset_sales_query, params).fetchone()
         
-        total_income = float(income_result.total_income) if income_result.total_income else 0.0
-        total_expenses = float(expenses_result.total_expenses) if expenses_result.total_expenses else 0.0
-        total_bills = float(bills_result.total_bills) if bills_result.total_bills else 0.0
-        total_liabilities = float(liabilities_result.total_liabilities) if liabilities_result.total_liabilities else 0.0
-        total_asset_sales = float(asset_sales_result.total_asset_sales) if asset_sales_result.total_asset_sales else 0.0
+        total_income = float(income_result.total_income) if income_result.total_income is not None else 0.0
+        total_expenses = float(expenses_result.total_expenses) if expenses_result.total_expenses is not None else 0.0
+        total_bills = float(bills_result.total_bills) if bills_result.total_bills is not None else 0.0
+        total_liabilities = float(liabilities_result.total_liabilities) if liabilities_result.total_liabilities is not None else 0.0
+        total_asset_sales = float(asset_sales_result.total_asset_sales) if asset_sales_result.total_asset_sales is not None else 0.0
         
         total_monthly_outgoings = total_expenses + total_bills + total_liabilities
         net_cash_flow = total_income - total_monthly_outgoings

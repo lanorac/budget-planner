@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 
-const API_BASE_URL = 'http://localhost:3000/api/v1'
+const API_BASE_URL = 'http://localhost:3000'
 
 export interface Asset {
   id: string
@@ -35,7 +35,7 @@ export interface UpdateAssetRequest {
 // API functions
 const fetchAssets = async (plannerId: string, scenario: string = 'ALL'): Promise<Asset[]> => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/assets`, {
+    const response = await axios.get(`${API_BASE_URL}/api/v1/assets`, {
       params: { planner_id: plannerId, scenario },
       timeout: 5000 // 5 second timeout
     })
@@ -53,17 +53,17 @@ const fetchAssets = async (plannerId: string, scenario: string = 'ALL'): Promise
 }
 
 const createAsset = async (asset: CreateAssetRequest): Promise<Asset> => {
-  const response = await axios.post(`${API_BASE_URL}/assets`, asset)
+  const response = await axios.post(`${API_BASE_URL}/api/v1/assets`, asset)
   return response.data
 }
 
 const updateAsset = async ({ id, ...asset }: { id: string } & UpdateAssetRequest): Promise<Asset> => {
-  const response = await axios.put(`${API_BASE_URL}/assets/${id}`, asset)
+  const response = await axios.put(`${API_BASE_URL}/api/v1/assets/${id}`, asset)
   return response.data
 }
 
 const deleteAsset = async (id: string): Promise<void> => {
-  await axios.delete(`${API_BASE_URL}/assets/${id}`)
+  await axios.delete(`${API_BASE_URL}/api/v1/assets/${id}`)
 }
 
 // Custom hooks

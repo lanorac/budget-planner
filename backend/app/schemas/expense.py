@@ -11,7 +11,7 @@ class ExpenseBase(BaseModel):
     monthly_amount: Decimal = Field(..., ge=0)
     category_id: Optional[uuid.UUID] = None
     linked_asset_id: Optional[uuid.UUID] = None
-    linked_liability_id: Optional[uuid.UUID] = None
+    linked_liab_id: Optional[uuid.UUID] = None
     notes: Optional[str] = None
 
 class ExpenseCreate(ExpenseBase):
@@ -24,7 +24,7 @@ class ExpenseUpdate(BaseModel):
     monthly_amount: Optional[Decimal] = Field(None, ge=0)
     category_id: Optional[uuid.UUID] = None
     linked_asset_id: Optional[uuid.UUID] = None
-    linked_liability_id: Optional[uuid.UUID] = None
+    linked_liab_id: Optional[uuid.UUID] = None
     notes: Optional[str] = None
 
 class ExpenseResponse(ExpenseBase):

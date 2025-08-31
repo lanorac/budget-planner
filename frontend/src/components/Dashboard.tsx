@@ -2,17 +2,20 @@ import { Tab } from '@headlessui/react'
 import { classNames } from '../utils/classNames'
 import KPICards from './KPICards'
 import AssetsTable from './AssetsTable'
-import LiabilitiesTable from './LiabilitiesTable'
-import IncomeTable from './IncomeTable'
-import ExpensesTable from './ExpensesTable'
+import { LiabilitiesTable } from './LiabilitiesTable'
+import { IncomeTable } from './IncomeTable'
+import { ExpensesTable } from './ExpensesTable'
 import BillsTable from './BillsTable'
+
+// Sample planner ID - in a real app, this would come from user context/authentication
+const SAMPLE_PLANNER_ID = '550e8400-e29b-41d4-a716-446655440000'
 
 const tabs = [
   { name: 'Overview', component: KPICards, icon: '📊' },
-  { name: 'Assets', component: AssetsTable, icon: '🏠' },
-  { name: 'Liabilities', component: LiabilitiesTable, icon: '💳' },
-  { name: 'Income', component: IncomeTable, icon: '💰' },
-  { name: 'Expenses', component: ExpensesTable, icon: '📈' },
+  { name: 'Assets', component: AssetsTable, icon: '🏠', props: { plannerId: SAMPLE_PLANNER_ID } },
+  { name: 'Liabilities', component: LiabilitiesTable, icon: '💳', props: { plannerId: SAMPLE_PLANNER_ID } },
+  { name: 'Income', component: IncomeTable, icon: '💰', props: { plannerId: SAMPLE_PLANNER_ID } },
+  { name: 'Expenses', component: ExpensesTable, icon: '📈', props: { plannerId: SAMPLE_PLANNER_ID } },
   { name: 'Bills', component: BillsTable, icon: '📋' },
 ]
 
@@ -53,7 +56,7 @@ export default function Dashboard() {
         <Tab.Panels className="mt-8">
           {tabs.map((tab, idx) => (
             <Tab.Panel key={idx} className="card">
-              <tab.component />
+              <tab.component {...(tab.props || {})} />
             </Tab.Panel>
           ))}
         </Tab.Panels>

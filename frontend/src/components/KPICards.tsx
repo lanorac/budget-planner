@@ -68,72 +68,68 @@ export default function KPICards() {
       </div>
       
       {/* KPI Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {/* Monthly Income */}
         <div className="kpi-card group">
-          <div className="flex items-center justify-between">
-            <div className="flex-shrink-0">
-              <div className="kpi-icon bg-green-600">
-                <span className="text-white text-xl">💰</span>
-              </div>
+          <div className="flex flex-col items-center text-center">
+            <div className="kpi-icon bg-green-600 mb-3">
+              <span className="text-white text-xl">💰</span>
             </div>
-            <div className="ml-4 flex-1">
-              <p className="text-sm font-medium text-gray-600">Monthly Income</p>
-              <p className="text-2xl font-bold text-gray-900">€{totals.monthly_income.toLocaleString()}</p>
-              <p className="text-xs text-green-600 font-medium">Active income sources</p>
-            </div>
+            <p className="text-sm font-medium text-gray-600">Monthly Income</p>
+            <p className="text-2xl font-bold text-gray-900">€{totals.monthly_income.toLocaleString()}</p>
+            <p className="text-xs text-green-600 font-medium">Active income sources</p>
           </div>
         </div>
 
         {/* Monthly Expenses */}
         <div className="kpi-card group">
-          <div className="flex items-center justify-between">
-            <div className="flex-shrink-0">
-              <div className="kpi-icon bg-red-600">
-                <span className="text-white text-xl">📊</span>
-              </div>
+          <div className="flex flex-col items-center text-center">
+            <div className="kpi-icon bg-red-600 mb-3">
+              <span className="text-white text-xl">📊</span>
             </div>
-            <div className="ml-4 flex-1">
-              <p className="text-sm font-medium text-gray-600">Monthly Expenses</p>
-              <p className="text-2xl font-bold text-gray-900">€{totals.monthly_expenses.toLocaleString()}</p>
-              <p className="text-xs text-red-600 font-medium">Regular expenses</p>
+            <p className="text-sm font-medium text-gray-600">Monthly Expenses</p>
+            <p className="text-2xl font-bold text-gray-900">€{totals.monthly_expenses.toLocaleString()}</p>
+            <p className="text-xs text-red-600 font-medium">Regular expenses</p>
+          </div>
+        </div>
+
+        {/* Monthly Liabilities */}
+        <div className="kpi-card group">
+          <div className="flex flex-col items-center text-center">
+            <div className="kpi-icon bg-orange-600 mb-3">
+              <span className="text-white text-xl">💳</span>
             </div>
+            <p className="text-sm font-medium text-gray-600">Monthly Liabilities</p>
+            <p className="text-2xl font-bold text-gray-900">€{totals.monthly_liabilities.toLocaleString()}</p>
+            <p className="text-xs text-orange-600 font-medium">Debt payments</p>
           </div>
         </div>
 
         {/* Net Cash Flow */}
         <div className="kpi-card group">
-          <div className="flex items-center justify-between">
-            <div className="flex-shrink-0">
-              <div className="kpi-icon bg-blue-600">
-                <span className="text-white text-xl">📈</span>
-              </div>
+          <div className="flex flex-col items-center text-center">
+            <div className="kpi-icon bg-blue-600 mb-3">
+              <span className="text-white text-xl">📈</span>
             </div>
-            <div className="ml-4 flex-1">
-              <p className="text-sm font-medium text-gray-600">Net Cash Flow</p>
-              <p className={`text-2xl font-bold ${totals.net_cash_flow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                €{totals.net_cash_flow.toLocaleString()}
-              </p>
-              <p className={`text-xs font-medium ${totals.net_cash_flow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {totals.net_cash_flow >= 0 ? 'Positive cash flow' : 'Negative cash flow'}
-              </p>
-            </div>
+            <p className="text-sm font-medium text-gray-600">Net Cash Flow</p>
+            <p className={`text-2xl font-bold ${totals.net_cash_flow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              €{totals.net_cash_flow.toLocaleString()}
+            </p>
+            <p className={`text-xs font-medium ${totals.net_cash_flow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {totals.net_cash_flow >= 0 ? 'Positive cash flow' : 'Negative cash flow'}
+            </p>
           </div>
         </div>
 
         {/* Asset Sales */}
         <div className="kpi-card group">
-          <div className="flex items-center justify-between">
-            <div className="flex-shrink-0">
-              <div className="kpi-icon bg-yellow-600">
-                <span className="text-white text-xl">🏠</span>
-              </div>
+          <div className="flex flex-col items-center text-center">
+            <div className="kpi-icon bg-yellow-600 mb-3">
+              <span className="text-white text-xl">🏠</span>
             </div>
-            <div className="ml-4 flex-1">
-              <p className="text-sm font-medium text-gray-600">Asset Sales</p>
-              <p className="text-2xl font-bold text-gray-900">€{totals.asset_sales.toLocaleString()}</p>
-              <p className="text-xs text-yellow-600 font-medium">Total asset value</p>
-            </div>
+            <p className="text-sm font-medium text-gray-600">Asset Sales</p>
+            <p className="text-2xl font-bold text-gray-900">€{totals.asset_sales.toLocaleString()}</p>
+            <p className="text-xs text-yellow-600 font-medium">Total asset value</p>
           </div>
         </div>
       </div>

@@ -44,22 +44,7 @@ export default function BillsTable() {
     setIsFormOpen(true)
   }
 
-  const handleEdit = (bill: Bill) => {
-    setEditingBill(bill)
-    setFormData({
-      name: bill.name,
-      include_toggle: bill.include_toggle,
-      scenario: bill.scenario,
-      bill_amount: bill.bill_amount,
-      interval_months: bill.interval_months,
-      category_id: bill.category_id,
-      linked_asset_id: bill.linked_asset_id,
-      linked_liab_id: bill.linked_liab_id,
-      notes: bill.notes || '',
-      planner_id: bill.planner_id
-    })
-    setIsFormOpen(true)
-  }
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

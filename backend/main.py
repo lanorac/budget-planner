@@ -4,7 +4,7 @@ import uvicorn
 
 from app.database import engine
 from app.models import Base
-from app.routers import assets, liabilities, income, expenses, bills, categories, settings, kpis
+from app.routers import assets, liabilities, income, expenses, bills, categories, settings, kpis, scenarios
 
 # Create tables on startup
 Base.metadata.create_all(bind=engine)
@@ -33,6 +33,7 @@ app.include_router(bills.router, prefix="/api/v1", tags=["bills"])
 app.include_router(categories.router, prefix="/api/v1", tags=["categories"])
 app.include_router(settings.router, prefix="/api/v1", tags=["settings"])
 app.include_router(kpis.router, prefix="/api/v1", tags=["kpis"])
+app.include_router(scenarios.router, prefix="/api/v1", tags=["scenarios"])
 
 @app.get("/")
 async def root():

@@ -5,10 +5,11 @@ const TEMP_PLANNER_ID = "550e8400-e29b-41d4-a716-446655440000"
 
 interface KPICardsProps {
   onNavigateToTab?: (tabIndex: number) => void
+  selectedScenario?: string
 }
 
-export default function KPICards({ onNavigateToTab }: KPICardsProps) {
-  const { data: kpiData, isLoading, error } = useMonthlyTotals(TEMP_PLANNER_ID)
+export default function KPICards({ onNavigateToTab, selectedScenario }: KPICardsProps) {
+  const { data: kpiData, isLoading, error } = useMonthlyTotals(TEMP_PLANNER_ID, selectedScenario)
 
   const handleCardClick = (tabIndex: number) => {
     if (onNavigateToTab) {
@@ -76,12 +77,27 @@ export default function KPICards({ onNavigateToTab }: KPICardsProps) {
     return `€${(value || 0).toLocaleString()}`
   }
 
+  // Update header text based on selected scenario
+  const getHeaderText = () => {
+    if (selectedScenario && selectedScenario !== 'ALL') {
+      return `Financial Summary - ${selectedScenario} Scenario`
+    }
+    return "Financial Summary - All Scenarios"
+  }
+
+  const getSubheaderText = () => {
+    if (selectedScenario && selectedScenario !== 'ALL') {
+      return `Your financial position filtered by the ${selectedScenario} scenario`
+    }
+    return "Your current financial position across all scenarios"
+  }
+
   return (
     <div className="space-y-8">
       {/* Section header */}
       <div className="text-center">
-        <h3 className="text-2xl font-bold text-gray-800 mb-2">Financial Summary</h3>
-        <p className="text-gray-600">Your current financial position across all scenarios</p>
+        <h3 className="text-2xl font-bold text-gray-800 mb-2">{getHeaderText()}</h3>
+        <p className="text-gray-600">{getSubheaderText()}</p>
       </div>
       
       {/* KPI Grid - Three Rows */}

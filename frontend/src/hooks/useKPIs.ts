@@ -11,6 +11,8 @@ export interface MonthlyTotals {
   total_monthly_outgoings: number
   net_cash_flow: number
   asset_sales: number
+  liability_principal: number
+  net_value: number
 }
 
 export interface KPITotalsResponse {

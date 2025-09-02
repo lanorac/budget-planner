@@ -66,7 +66,14 @@ export default function KPICards({ onNavigateToTab }: KPICardsProps) {
     monthly_liabilities: 0,
     total_monthly_outgoings: 0,
     net_cash_flow: 0,
-    asset_sales: 0
+    asset_sales: 0,
+    liability_principal: 0,
+    net_value: 0
+  }
+
+  // Helper function to safely format numbers
+  const formatCurrency = (value: number | undefined) => {
+    return `€${(value || 0).toLocaleString()}`
   }
 
   return (
@@ -77,89 +84,148 @@ export default function KPICards({ onNavigateToTab }: KPICardsProps) {
         <p className="text-gray-600">Your current financial position across all scenarios</p>
       </div>
       
-      {/* KPI Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-        {/* Monthly Income - Clickable */}
-        <div 
-          className="kpi-card group cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:scale-105 border-2 border-transparent hover:border-green-200"
-          onClick={() => handleCardClick(3)} // Income tab
-          title="Click to view Income details"
-        >
-          <div className="flex flex-col items-center text-center">
-            <div className="kpi-icon bg-green-600 mb-3">
-              <span className="text-white text-xl">💰</span>
+      {/* KPI Grid - Three Rows */}
+      <div className="space-y-6">
+        {/* Row 1: Monthly Cash Flow */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Monthly Income - Clickable */}
+          <div 
+            className="kpi-card group cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:scale-105 border-2 border-transparent hover:border-green-200"
+            onClick={() => handleCardClick(3)} // Income tab
+            title="Click to view Income details"
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="kpi-icon bg-green-600 mb-3">
+                <span className="text-white text-xl">💰</span>
+              </div>
+              <p className="text-sm font-medium text-gray-600">Monthly Income</p>
+              <p className="text-2xl font-bold text-gray-900">{formatCurrency(totals.monthly_income)}</p>
+              <p className="text-xs text-green-600 font-medium">Active income sources</p>
+              <p className="text-xs text-gray-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click to view →</p>
             </div>
-            <p className="text-sm font-medium text-gray-600">Monthly Income</p>
-            <p className="text-2xl font-bold text-gray-900">€{totals.monthly_income.toLocaleString()}</p>
-            <p className="text-xs text-green-600 font-medium">Active income sources</p>
-            <p className="text-xs text-gray-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click to view →</p>
+          </div>
+
+          {/* Monthly Liabilities - Clickable */}
+          <div 
+            className="kpi-card group cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:scale-105 border-2 border-transparent hover:border-orange-200"
+            onClick={() => handleCardClick(2)} // Liabilities tab
+            title="Click to view Liabilities details"
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="kpi-icon bg-orange-600 mb-3">
+                <span className="text-white text-xl">💳</span>
+              </div>
+              <p className="text-sm font-medium text-gray-600">Monthly Liabilities</p>
+              <p className="text-2xl font-bold text-gray-900">{formatCurrency(totals.monthly_liabilities)}</p>
+              <p className="text-xs text-orange-600 font-medium">Debt payments</p>
+              <p className="text-xs text-gray-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click to view →</p>
+            </div>
+          </div>
+
+          {/* Monthly Bills - Clickable (when implemented) */}
+          <div 
+            className="kpi-card group cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:scale-105 border-2 border-transparent hover:border-purple-200"
+            onClick={() => handleCardClick(5)} // Bills tab (when implemented)
+            title="Click to view Bills details"
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="kpi-icon bg-purple-600 mb-3">
+                <span className="text-white text-xl">📋</span>
+              </div>
+              <p className="text-sm font-medium text-gray-600">Monthly Bills</p>
+              <p className="text-2xl font-bold text-gray-900">{formatCurrency(totals.monthly_bills)}</p>
+              <p className="text-xs text-purple-600 font-medium">Regular bills</p>
+              <p className="text-xs text-gray-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click to view →</p>
+            </div>
+          </div>
+
+          {/* Monthly Expenses - Clickable */}
+          <div 
+            className="kpi-card group cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:scale-105 border-2 border-transparent hover:border-red-200"
+            onClick={() => handleCardClick(4)} // Expenses tab
+            title="Click to view Expenses details"
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="kpi-icon bg-red-600 mb-3">
+                <span className="text-white text-xl">📊</span>
+              </div>
+              <p className="text-sm font-medium text-gray-600">Monthly Expenses</p>
+              <p className="text-2xl font-bold text-gray-900">{formatCurrency(totals.monthly_expenses)}</p>
+              <p className="text-xs text-red-600 font-medium">Regular expenses</p>
+              <p className="text-xs text-gray-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click to view →</p>
+            </div>
           </div>
         </div>
 
-        {/* Monthly Expenses - Clickable */}
-        <div 
-          className="kpi-card group cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:scale-105 border-2 border-transparent hover:border-red-200"
-          onClick={() => handleCardClick(4)} // Expenses tab
-          title="Click to view Expenses details"
-        >
-          <div className="flex flex-col items-center text-center">
-            <div className="kpi-icon bg-red-600 mb-3">
-              <span className="text-white text-xl">📊</span>
+        {/* Row 2: Asset and Liability Values */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          {/* Total Asset Value - Clickable */}
+          <div 
+            className="kpi-card group cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:scale-105 border-2 border-transparent hover:border-yellow-200"
+            onClick={() => handleCardClick(1)} // Assets tab
+            title="Click to view Assets details"
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="kpi-icon bg-yellow-600 mb-3">
+                <span className="text-white text-xl">🏠</span>
+              </div>
+              <p className="text-sm font-medium text-gray-600">Total Asset Value</p>
+              <p className="text-2xl font-bold text-gray-900">{formatCurrency(totals.asset_sales)}</p>
+              <p className="text-xs text-yellow-600 font-medium">Asset sales value</p>
+              <p className="text-xs text-gray-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click to view →</p>
             </div>
-            <p className="text-sm font-medium text-gray-600">Monthly Expenses</p>
-            <p className="text-2xl font-bold text-gray-900">€{totals.monthly_expenses.toLocaleString()}</p>
-            <p className="text-xs text-red-600 font-medium">Regular expenses</p>
-            <p className="text-xs text-gray-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click to view →</p>
+          </div>
+
+          {/* Total Liability Principal - Clickable */}
+          <div 
+            className="kpi-card group cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:scale-105 border-2 border-transparent hover:border-orange-200"
+            onClick={() => handleCardClick(2)} // Liabilities tab
+            title="Click to view Liabilities details"
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="kpi-icon bg-orange-600 mb-3">
+                <span className="text-white text-xl">💳</span>
+              </div>
+              <p className="text-sm font-medium text-gray-600">Total Liability Principal</p>
+              <p className="text-2xl font-bold text-gray-900">{formatCurrency(totals.liability_principal)}</p>
+              <p className="text-xs text-orange-600 font-medium">Total debt amount</p>
+              <p className="text-xs text-gray-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click to view →</p>
+            </div>
           </div>
         </div>
 
-        {/* Monthly Liabilities - Clickable */}
-        <div 
-          className="kpi-card group cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:scale-105 border-2 border-transparent hover:border-orange-200"
-          onClick={() => handleCardClick(2)} // Liabilities tab
-          title="Click to view Liabilities details"
-        >
-          <div className="flex flex-col items-center text-center">
-            <div className="kpi-icon bg-orange-600 mb-3">
-              <span className="text-white text-xl">💳</span>
+        {/* Row 3: Net Values */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          {/* Monthly Balance - Income vs Expenses */}
+          <div className="kpi-card group">
+            <div className="flex flex-col items-center text-center">
+              <div className="kpi-icon bg-blue-600 mb-3">
+                <span className="text-white text-xl">📈</span>
+              </div>
+              <p className="text-sm font-medium text-gray-600">Monthly Balance</p>
+              <p className={`text-2xl font-bold ${totals.net_cash_flow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {formatCurrency(totals.net_cash_flow)}
+              </p>
+              <p className={`text-xs font-medium ${(totals.net_cash_flow || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {(totals.net_cash_flow || 0) >= 0 ? 'Income > Expenses' : 'Expenses > Income'}
+              </p>
             </div>
-            <p className="text-sm font-medium text-gray-600">Monthly Liabilities</p>
-            <p className="text-2xl font-bold text-gray-900">€{totals.monthly_liabilities.toLocaleString()}</p>
-            <p className="text-xs text-orange-600 font-medium">Debt payments</p>
-            <p className="text-xs text-gray-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click to view →</p>
           </div>
-        </div>
 
-        {/* Net Cash Flow */}
-        <div className="kpi-card group">
-          <div className="flex flex-col items-center text-center">
-            <div className="kpi-icon bg-blue-600 mb-3">
-              <span className="text-white text-xl">📈</span>
+          {/* Net Value - Assets vs Liabilities */}
+          <div className="kpi-card group">
+            <div className="flex flex-col items-center text-center">
+              <div className="kpi-icon bg-indigo-600 mb-3">
+                <span className="text-white text-xl">⚖️</span>
+              </div>
+              <p className="text-sm font-medium text-gray-600">Net Value</p>
+              <p className={`text-2xl font-bold ${totals.net_value >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {formatCurrency(totals.net_value)}
+              </p>
+              <p className={`text-xs font-medium ${(totals.net_value || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {(totals.net_value || 0) >= 0 ? 'Assets > Liabilities' : 'Liabilities > Assets'}
+              </p>
             </div>
-            <p className="text-sm font-medium text-gray-600">Net Cash Flow</p>
-            <p className={`text-2xl font-bold ${totals.net_cash_flow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              €{totals.net_cash_flow.toLocaleString()}
-            </p>
-            <p className={`text-xs font-medium ${totals.net_cash_flow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {totals.net_cash_flow >= 0 ? 'Positive cash flow' : 'Negative cash flow'}
-            </p>
-          </div>
-        </div>
-
-        {/* Asset Sales - Clickable */}
-        <div 
-          className="kpi-card group cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:scale-105 border-2 border-transparent hover:border-yellow-200"
-          onClick={() => handleCardClick(1)} // Assets tab
-          title="Click to view Assets details"
-        >
-          <div className="flex flex-col items-center text-center">
-            <div className="kpi-icon bg-yellow-600 mb-3">
-              <span className="text-white text-xl">🏠</span>
-            </div>
-            <p className="text-sm font-medium text-gray-600">Asset Sales</p>
-            <p className="text-2xl font-bold text-gray-900">€{totals.asset_sales.toLocaleString()}</p>
-            <p className="text-xs text-yellow-600 font-medium">Total asset value</p>
-            <p className="text-xs text-gray-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click to view →</p>
           </div>
         </div>
       </div>

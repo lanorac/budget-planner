@@ -182,6 +182,21 @@ class EffectiveStatusService:
             AND (scenario = :scenario OR :scenario = 'ALL')
         """)
         
+        # Get liability principal for the scenario
+        liability_principal_query = text("""
+            SELECT COALESCE(SUM(l.principal), 0) as total_liability_principal
+            FROM liabilities l
+            LEFT JOIN assets a ON l.linked_asset_id = a.id
+            WHERE l.planner_id = :planner_id
+            AND (l.scenario = :scenario OR :scenario = 'ALL')
+            AND CASE 
+                WHEN l.include_toggle = 'off' THEN 'off'
+                WHEN l.linked_asset_id IS NULL THEN l.include_toggle
+                WHEN a.include_toggle = 'off' THEN 'off'
+                ELSE l.include_toggle
+            END = 'on'
+        """)
+        
         params = {"planner_id": str(planner_id).replace('-', ''), "scenario": scenario}
         
         income_result = db.execute(income_query, params).fetchone()
@@ -189,15 +204,18 @@ class EffectiveStatusService:
         bills_result = db.execute(bills_query, params).fetchone()
         liabilities_result = db.execute(liabilities_query, params).fetchone()
         asset_sales_result = db.execute(asset_sales_query, params).fetchone()
+        liability_principal_result = db.execute(liability_principal_query, params).fetchone()
         
         total_income = float(income_result.total_income) if income_result.total_income is not None else 0.0
         total_expenses = float(expenses_result.total_expenses) if expenses_result.total_expenses is not None else 0.0
         total_bills = float(bills_result.total_bills) if bills_result.total_bills is not None else 0.0
         total_liabilities = float(liabilities_result.total_liabilities) if liabilities_result.total_liabilities is not None else 0.0
         total_asset_sales = float(asset_sales_result.total_asset_sales) if asset_sales_result.total_asset_sales is not None else 0.0
+        total_liability_principal = float(liability_principal_result.total_liability_principal) if liability_principal_result.total_liability_principal is not None else 0.0
         
         total_monthly_outgoings = total_expenses + total_bills + total_liabilities
         net_cash_flow = total_income - total_monthly_outgoings
+        net_value = total_asset_sales - total_liability_principal
         
         return {
             "monthly_income": total_income,
@@ -206,5 +224,7 @@ class EffectiveStatusService:
             "monthly_liabilities": total_liabilities,
             "total_monthly_outgoings": total_monthly_outgoings,
             "net_cash_flow": net_cash_flow,
-            "asset_sales": total_asset_sales
+            "asset_sales": total_asset_sales,
+            "liability_principal": total_liability_principal,
+            "net_value": net_value
         }

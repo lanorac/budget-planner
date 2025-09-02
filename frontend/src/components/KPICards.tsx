@@ -3,8 +3,18 @@ import { useMonthlyTotals } from '../hooks/useKPIs'
 // Temporary planner ID for development - in real app this would come from context/auth
 const TEMP_PLANNER_ID = "550e8400-e29b-41d4-a716-446655440000"
 
-export default function KPICards() {
+interface KPICardsProps {
+  onNavigateToTab?: (tabIndex: number) => void
+}
+
+export default function KPICards({ onNavigateToTab }: KPICardsProps) {
   const { data: kpiData, isLoading, error } = useMonthlyTotals(TEMP_PLANNER_ID)
+
+  const handleCardClick = (tabIndex: number) => {
+    if (onNavigateToTab) {
+      onNavigateToTab(tabIndex)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -69,8 +79,12 @@ export default function KPICards() {
       
       {/* KPI Grid */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-        {/* Monthly Income */}
-        <div className="kpi-card group">
+        {/* Monthly Income - Clickable */}
+        <div 
+          className="kpi-card group cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:scale-105 border-2 border-transparent hover:border-green-200"
+          onClick={() => handleCardClick(3)} // Income tab
+          title="Click to view Income details"
+        >
           <div className="flex flex-col items-center text-center">
             <div className="kpi-icon bg-green-600 mb-3">
               <span className="text-white text-xl">💰</span>
@@ -78,11 +92,16 @@ export default function KPICards() {
             <p className="text-sm font-medium text-gray-600">Monthly Income</p>
             <p className="text-2xl font-bold text-gray-900">€{totals.monthly_income.toLocaleString()}</p>
             <p className="text-xs text-green-600 font-medium">Active income sources</p>
+            <p className="text-xs text-gray-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click to view →</p>
           </div>
         </div>
 
-        {/* Monthly Expenses */}
-        <div className="kpi-card group">
+        {/* Monthly Expenses - Clickable */}
+        <div 
+          className="kpi-card group cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:scale-105 border-2 border-transparent hover:border-red-200"
+          onClick={() => handleCardClick(4)} // Expenses tab
+          title="Click to view Expenses details"
+        >
           <div className="flex flex-col items-center text-center">
             <div className="kpi-icon bg-red-600 mb-3">
               <span className="text-white text-xl">📊</span>
@@ -90,11 +109,16 @@ export default function KPICards() {
             <p className="text-sm font-medium text-gray-600">Monthly Expenses</p>
             <p className="text-2xl font-bold text-gray-900">€{totals.monthly_expenses.toLocaleString()}</p>
             <p className="text-xs text-red-600 font-medium">Regular expenses</p>
+            <p className="text-xs text-gray-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click to view →</p>
           </div>
         </div>
 
-        {/* Monthly Liabilities */}
-        <div className="kpi-card group">
+        {/* Monthly Liabilities - Clickable */}
+        <div 
+          className="kpi-card group cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:scale-105 border-2 border-transparent hover:border-orange-200"
+          onClick={() => handleCardClick(2)} // Liabilities tab
+          title="Click to view Liabilities details"
+        >
           <div className="flex flex-col items-center text-center">
             <div className="kpi-icon bg-orange-600 mb-3">
               <span className="text-white text-xl">💳</span>
@@ -102,6 +126,7 @@ export default function KPICards() {
             <p className="text-sm font-medium text-gray-600">Monthly Liabilities</p>
             <p className="text-2xl font-bold text-gray-900">€{totals.monthly_liabilities.toLocaleString()}</p>
             <p className="text-xs text-orange-600 font-medium">Debt payments</p>
+            <p className="text-xs text-gray-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click to view →</p>
           </div>
         </div>
 
@@ -121,8 +146,12 @@ export default function KPICards() {
           </div>
         </div>
 
-        {/* Asset Sales */}
-        <div className="kpi-card group">
+        {/* Asset Sales - Clickable */}
+        <div 
+          className="kpi-card group cursor-pointer hover:shadow-lg transition-all duration-200 transform hover:scale-105 border-2 border-transparent hover:border-yellow-200"
+          onClick={() => handleCardClick(1)} // Assets tab
+          title="Click to view Assets details"
+        >
           <div className="flex flex-col items-center text-center">
             <div className="kpi-icon bg-yellow-600 mb-3">
               <span className="text-white text-xl">🏠</span>
@@ -130,6 +159,7 @@ export default function KPICards() {
             <p className="text-sm font-medium text-gray-600">Asset Sales</p>
             <p className="text-2xl font-bold text-gray-900">€{totals.asset_sales.toLocaleString()}</p>
             <p className="text-xs text-yellow-600 font-medium">Total asset value</p>
+            <p className="text-xs text-gray-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click to view →</p>
           </div>
         </div>
       </div>
@@ -141,7 +171,10 @@ export default function KPICards() {
         </div>
         <div className="card-body">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <button className="btn-success">
+            <button 
+              className="btn-success cursor-pointer hover:shadow-lg transition-all duration-200"
+              onClick={() => handleCardClick(1)} // Assets tab
+            >
               <span className="mr-2">➕</span>
               Add New Asset
             </button>

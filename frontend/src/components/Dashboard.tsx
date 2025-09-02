@@ -1,4 +1,5 @@
 import { Tab } from '@headlessui/react'
+import { useState } from 'react'
 import { classNames } from '../utils/classNames'
 import KPICards from './KPICards'
 import AssetsTable from './AssetsTable'
@@ -20,6 +21,12 @@ const tabs = [
 ]
 
 export default function Dashboard() {
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0)
+
+  const handleTabChange = (index: number) => {
+    setSelectedTabIndex(index)
+  }
+
   return (
     <div className="space-y-8">
       {/* Header section */}
@@ -33,7 +40,7 @@ export default function Dashboard() {
       </div>
 
       {/* Tabbed interface */}
-      <Tab.Group>
+      <Tab.Group selectedIndex={selectedTabIndex} onChange={handleTabChange}>
         <Tab.List className="tab-list">
           {tabs.map((tab) => (
             <Tab
@@ -56,7 +63,7 @@ export default function Dashboard() {
         <Tab.Panels className="mt-8">
           {tabs.map((tab, idx) => (
             <Tab.Panel key={idx} className="card">
-              <tab.component {...(tab.props || {})} />
+              <tab.component {...(tab.props || {})} onNavigateToTab={handleTabChange} />
             </Tab.Panel>
           ))}
         </Tab.Panels>

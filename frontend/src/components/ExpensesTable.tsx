@@ -32,9 +32,10 @@ interface ExpenseCreate {
 interface ExpensesTableProps {
   plannerId: string;
   scenario?: string;
+  onNavigateToTab?: (tabIndex: number) => void;
 }
 
-export const ExpensesTable: React.FC<ExpensesTableProps> = ({ plannerId, scenario = 'ALL' }) => {
+export const ExpensesTable: React.FC<ExpensesTableProps> = ({ plannerId, scenario = 'ALL', onNavigateToTab }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<ExpenseCreate>>({

@@ -26,9 +26,10 @@ interface AssetCreate {
 interface AssetsTableProps {
   plannerId: string;
   scenario?: string;
+  onNavigateToTab?: (tabIndex: number) => void;
 }
 
-export default function AssetsTable({ plannerId, scenario = 'ALL' }: AssetsTableProps) {
+export default function AssetsTable({ plannerId, scenario = 'ALL', onNavigateToTab }: AssetsTableProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<AssetCreate>>({
@@ -310,7 +311,7 @@ export default function AssetsTable({ plannerId, scenario = 'ALL' }: AssetsTable
                     </span>
                   </td>
                   <td className="table-cell">
-                    <span className="font-semibold text-gray-900">€{asset.sale_value.toLocaleString()}</span>
+                    <span className="font-semibold text-gray-900">€{Number(asset.sale_value).toLocaleString()}</span>
                   </td>
                   <td className="table-cell">
                     <span className="text-gray-600">{asset.notes || '-'}</span>
@@ -357,7 +358,7 @@ export default function AssetsTable({ plannerId, scenario = 'ALL' }: AssetsTable
             <div className="text-center">
               <p className="text-sm font-medium text-gray-600">Total Value</p>
               <p className="text-2xl font-bold text-gray-900">
-                €{assetsList.reduce((sum, asset) => sum + asset.sale_value, 0).toLocaleString()}
+                €{assetsList.reduce((sum, asset) => sum + Number(asset.sale_value), 0).toLocaleString()}
               </p>
             </div>
             <div className="text-center">

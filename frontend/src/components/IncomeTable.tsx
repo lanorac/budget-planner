@@ -26,9 +26,10 @@ interface IncomeCreate {
 interface IncomeTableProps {
   plannerId: string;
   scenario?: string;
+  onNavigateToTab?: (tabIndex: number) => void;
 }
 
-export const IncomeTable: React.FC<IncomeTableProps> = ({ plannerId, scenario = 'ALL' }) => {
+export const IncomeTable: React.FC<IncomeTableProps> = ({ plannerId, scenario = 'ALL', onNavigateToTab }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<IncomeCreate>>({

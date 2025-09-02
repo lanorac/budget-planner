@@ -1,8 +1,6 @@
-interface BillsTableProps {
-  onNavigateToTab?: (tabIndex: number) => void;
-}
 
-export default function BillsTable({ onNavigateToTab }: BillsTableProps) {
+
+export default function BillsTable() {
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center">

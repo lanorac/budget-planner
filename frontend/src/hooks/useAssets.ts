@@ -82,7 +82,7 @@ export const useCreateAsset = () => {
   
   return useMutation({
     mutationFn: createAsset,
-    onSuccess: (data) => {
+    onSuccess: () => {
       // Invalidate and refetch assets queries
       queryClient.invalidateQueries({ queryKey: ['assets'] })
     },
@@ -94,7 +94,7 @@ export const useUpdateAsset = () => {
   
   return useMutation({
     mutationFn: updateAsset,
-    onSuccess: (data) => {
+    onSuccess: () => {
       // Invalidate and refetch assets queries
       queryClient.invalidateQueries({ queryKey: ['assets'] })
     },

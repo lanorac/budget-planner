@@ -1,18 +1,9 @@
 import React, { useState } from 'react';
 import { useIncome, useCreateIncome, useUpdateIncome, useDeleteIncome } from '../hooks/useIncome';
+import EnhancedTable from './shared/EnhancedTable';
+import type { TableColumn, TableRow } from './shared/EnhancedTable';
 
-// Define types locally to avoid import issues
-interface Income {
-  id: string;
-  planner_id: string;
-  name: string;
-  include_toggle: 'on' | 'off';
-  scenario: 'ALL' | 'A' | 'B' | 'C';
-  monthly_amount: number;
-  notes?: string;
-  created_at: string;
-  updated_at: string;
-}
+
 
 interface IncomeCreate {
   planner_id: string;
@@ -29,7 +20,7 @@ interface IncomeTableProps {
   onNavigateToTab?: (tabIndex: number) => void;
 }
 
-export const IncomeTable: React.FC<IncomeTableProps> = ({ plannerId, scenario = 'ALL', onNavigateToTab }) => {
+export const IncomeTable: React.FC<IncomeTableProps> = ({ plannerId, scenario = 'ALL' }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<IncomeCreate>>({
@@ -44,6 +35,33 @@ export const IncomeTable: React.FC<IncomeTableProps> = ({ plannerId, scenario = 
   const createIncome = useCreateIncome();
   const updateIncome = useUpdateIncome();
   const deleteIncome = useDeleteIncome();
+
+  // Define table columns
+  const columns: TableColumn[] = [
+    { key: 'name', label: 'Name', type: 'text', editable: true },
+    { key: 'monthly_amount', label: 'Monthly Amount', type: 'currency', editable: true },
+    { key: 'include_toggle', label: 'Include', type: 'checkbox' },
+    { key: 'scenario', label: 'Scenario', type: 'scenario' },
+    { key: 'notes', label: 'Notes', type: 'text', editable: true },
+  ];
+
+  const handleRowUpdate = async (id: string, field: string, value: any) => {
+    try {
+      await updateIncome.mutateAsync({ id, [field]: value });
+    } catch (error) {
+      console.error('Error updating income:', error);
+    }
+  };
+
+  const handleRowDelete = async (id: string) => {
+    if (window.confirm('Are you sure you want to delete this income entry?')) {
+      try {
+        await deleteIncome.mutateAsync(id);
+      } catch (error) {
+        console.error('Error deleting income:', error);
+      }
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,27 +95,7 @@ export const IncomeTable: React.FC<IncomeTableProps> = ({ plannerId, scenario = 
     }
   };
 
-  const handleEdit = (income: Income) => {
-    setEditingId(income.id);
-    setFormData({
-      name: income.name,
-      include_toggle: income.include_toggle,
-      scenario: income.scenario,
-      monthly_amount: income.monthly_amount,
-      notes: income.notes || ''
-    });
-  };
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this income entry?')) {
-      try {
-        await deleteIncome.mutateAsync(id);
-      } catch (error) {
-        console.error('Error deleting income:', error);
-        alert('Failed to delete income');
-      }
-    }
-  };
 
   const handleCancel = () => {
     setIsAdding(false);
@@ -113,13 +111,39 @@ export const IncomeTable: React.FC<IncomeTableProps> = ({ plannerId, scenario = 
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="animate-pulse">
-          <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
-          <div className="space-y-3">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-12 bg-gray-200 rounded"></div>
-            ))}
+      <div className="space-y-6">
+        <div className="text-center">
+          <h3 className="text-2xl font-bold text-gray-800 mb-2">Income</h3>
+          <p className="text-gray-600">Loading your income data...</p>
+        </div>
+        <div className="table-container">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead>
+                <tr>
+                  {columns.map((column) => (
+                    <th key={column.key} className="table-header">
+                      {column.label}
+                    </th>
+                  ))}
+                  <th className="table-header w-24">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {[1, 2, 3].map((i) => (
+                  <tr key={i} className="animate-pulse">
+                    {columns.map((column) => (
+                      <td key={column.key} className="table-cell">
+                        <div className="h-4 bg-gray-300 rounded w-24"></div>
+                      </td>
+                    ))}
+                    <td className="table-cell">
+                      <div className="h-4 bg-gray-300 rounded w-16"></div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -128,39 +152,54 @@ export const IncomeTable: React.FC<IncomeTableProps> = ({ plannerId, scenario = 
 
   if (error) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="text-center text-red-600">
-          <p className="text-lg font-semibold mb-2">Error Loading Income</p>
-          <p className="text-sm text-gray-600 mb-4">
-            Unable to load financial data. Please check:
-          </p>
+      <div className="space-y-6">
+        <div className="text-center p-6">
+          <h3 className="text-lg font-semibold text-gray-700 mb-2">Error Loading Income</h3>
+          <p className="text-gray-500 mb-4">Unable to load financial data. Please check:</p>
           <ul className="text-sm text-gray-500 space-y-1">
-            <li>• Make sure the backend server is running on port 3000</li>
-            <li>• Check your internet connection</li>
-            <li>• Try refreshing the page</li>
+            <li>Make sure the backend server is running on port 3000</li>
+            <li>Check your internet connection</li>
+            <li>Try refreshing the page</li>
           </ul>
         </div>
       </div>
     );
   }
 
+  const incomeList = incomeEntries || [];
+
+  // Prepare data for enhanced table
+  const tableData: TableRow[] = incomeList.map(income => ({
+    id: income.id,
+    name: income.name,
+    monthly_amount: income.monthly_amount,
+    include_toggle: income.include_toggle,
+    scenario: income.scenario,
+    notes: income.notes || ''
+  }));
+
+  // Prepare summary data
+  const summaryData = [
+    { label: 'Total Income Sources', value: incomeList.length },
+    { label: 'Total Monthly Income', value: `€${incomeList.reduce((sum, income) => sum + (income.monthly_amount || 0), 0).toLocaleString()}` },
+    { label: 'Active Income', value: incomeList.filter(income => income.include_toggle === 'on').length, color: 'text-green-600' }
+  ];
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Income</h2>
-        {!isAdding && !editingId && (
-          <button
-            onClick={() => setIsAdding(true)}
-            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
-          >
-            Add Income
-          </button>
-        )}
+    <div className="space-y-6">
+      {/* Header section */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+        <div>
+          <h3 className="text-2xl font-bold text-gray-800">Income</h3>
+          <p className="text-gray-600 mt-1">
+            Manage your income sources and monthly amounts across different scenarios.
+          </p>
+        </div>
       </div>
 
       {/* Add/Edit Form */}
       {(isAdding || editingId) && (
-        <form onSubmit={handleSubmit} className="mb-6 p-4 bg-gray-50 rounded-lg">
+        <form onSubmit={handleSubmit} className="bg-gray-50 p-4 rounded-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
@@ -241,71 +280,17 @@ export const IncomeTable: React.FC<IncomeTableProps> = ({ plannerId, scenario = 
         </form>
       )}
 
-      {/* Income Table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monthly Amount</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Include</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Scenario</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {incomeEntries?.map((income) => (
-              <tr key={income.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {income.name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-semibold">
-                  ${income.monthly_amount.toLocaleString()}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                    income.include_toggle === 'on' 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-red-100 text-red-800'
-                  }`}>
-                    {income.include_toggle === 'on' ? '✅ On' : '❌ Off'}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {income.scenario}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
-                  {income.notes || '-'}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEdit(income)}
-                      className="text-blue-600 hover:text-blue-900 transition-colors"
-                    >
-                      ✏️ Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(income.id)}
-                      className="text-red-600 hover:text-red-900 transition-colors"
-                      disabled={deleteIncome.isPending}
-                    >
-                      {deleteIncome.isPending ? '🗑️ Deleting...' : '🗑️ Delete'}
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        
-        {(!incomeEntries || incomeEntries.length === 0) && (
-          <div className="text-center py-8 text-gray-500">
-            <p>No income entries found. Add your first income source to get started!</p>
-          </div>
-        )}
-      </div>
+      {/* Enhanced Table */}
+      <EnhancedTable
+        columns={columns}
+        data={tableData}
+        onRowUpdate={handleRowUpdate}
+        onRowDelete={handleRowDelete}
+        onRowAdd={() => setIsAdding(true)}
+        addButtonText="Add Income"
+        emptyMessage="No income entries found. Add your first income source to get started!"
+        summaryData={summaryData}
+      />
     </div>
   );
 };

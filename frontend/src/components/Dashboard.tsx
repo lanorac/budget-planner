@@ -63,7 +63,11 @@ export default function Dashboard() {
         <Tab.Panels className="mt-8">
           {tabs.map((tab, idx) => (
             <Tab.Panel key={idx} className="card">
-              <tab.component {...(tab.props || {})} onNavigateToTab={handleTabChange} />
+              <tab.component 
+                {...(tab.props || {})} 
+                plannerId={tab.props?.plannerId || SAMPLE_PLANNER_ID}
+                onNavigateToTab={handleTabChange} 
+              />
             </Tab.Panel>
           ))}
         </Tab.Panels>

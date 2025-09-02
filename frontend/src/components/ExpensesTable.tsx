@@ -30,7 +30,7 @@ export const ExpensesTable: React.FC<ExpensesTableProps> = ({ plannerId }) => {
   });
 
   // Always fetch all expenses regardless of scenario for the table view
-  const { data: expenses, isLoading, error } = useExpenses(plannerId, 'ALL');
+  const { data: expenses, isLoading, error } = useExpenses(plannerId);
   const createExpense = useCreateExpense();
   const updateExpense = useUpdateExpense();
   const deleteExpense = useDeleteExpense();

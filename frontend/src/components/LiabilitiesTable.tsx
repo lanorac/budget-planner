@@ -34,7 +34,7 @@ export const LiabilitiesTable: React.FC<LiabilitiesTableProps> = ({ plannerId })
   });
 
   // Always fetch all liabilities regardless of scenario for the table view
-  const { data: liabilities, isLoading, error } = useLiabilities(plannerId, 'ALL');
+  const { data: liabilities, isLoading, error } = useLiabilities(plannerId);
   const createLiability = useCreateLiability();
   const updateLiability = useUpdateLiability();
   const deleteLiability = useDeleteLiability();

@@ -41,12 +41,12 @@ export interface ExpenseUpdate {
   notes?: string;
 }
 
-export const useExpenses = (plannerId: string, scenario: string = 'ALL') => {
+export const useExpenses = (plannerId: string) => {
   return useQuery({
-    queryKey: ['expenses', plannerId, scenario],
+    queryKey: ['expenses', plannerId], // Remove scenario from query key to always fetch all expenses
     queryFn: async (): Promise<Expense[]> => {
       const response = await axios.get(`${API_BASE_URL}/api/v1/expenses`, {
-        params: { planner_id: plannerId, scenario }
+        params: { planner_id: plannerId, scenario: 'ALL' } // Always fetch ALL scenario data
       });
       return response.data;
     },

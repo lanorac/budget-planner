@@ -33,13 +33,13 @@ export interface IncomeUpdate {
 }
 
 // Fetch income
-export const useIncome = (plannerId: string, scenario: string = 'ALL') => {
+export const useIncome = (plannerId: string) => {
   return useQuery({
-    queryKey: ['income', plannerId, scenario],
+    queryKey: ['income', plannerId], // Remove scenario from query key to always fetch all income
     queryFn: async (): Promise<Income[]> => {
       try {
         const response = await axios.get(`${API_BASE_URL}/api/v1/income`, {
-          params: { planner_id: plannerId, scenario }
+          params: { planner_id: plannerId, scenario: 'ALL' } // Always fetch ALL scenario data
         });
         return response.data;
       } catch (error) {

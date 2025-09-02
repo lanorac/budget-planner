@@ -39,13 +39,13 @@ export interface LiabilityUpdate {
 }
 
 // Fetch liabilities
-export const useLiabilities = (plannerId: string, scenario: string = 'ALL') => {
+export const useLiabilities = (plannerId: string) => {
   return useQuery({
-    queryKey: ['liabilities', plannerId, scenario],
+    queryKey: ['liabilities', plannerId], // Remove scenario from query key to always fetch all liabilities
     queryFn: async (): Promise<Liability[]> => {
       try {
         const response = await axios.get(`${API_BASE_URL}/api/v1/liabilities`, {
-          params: { planner_id: plannerId, scenario }
+          params: { planner_id: plannerId, scenario: 'ALL' } // Always fetch ALL scenario data
         });
         return response.data;
       } catch (error) {

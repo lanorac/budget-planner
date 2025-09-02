@@ -31,7 +31,7 @@ export const IncomeTable: React.FC<IncomeTableProps> = ({ plannerId }) => {
   });
 
   // Always fetch all income regardless of scenario for the table view
-  const { data: incomeEntries, isLoading, error } = useIncome(plannerId, 'ALL');
+  const { data: incomeEntries, isLoading, error } = useIncome(plannerId);
   const createIncome = useCreateIncome();
   const updateIncome = useUpdateIncome();
   const deleteIncome = useDeleteIncome();

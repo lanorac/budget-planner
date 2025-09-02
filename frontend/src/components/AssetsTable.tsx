@@ -27,7 +27,7 @@ export default function AssetsTable({ plannerId }: AssetsTableProps) {
   });
 
   // Always fetch all assets regardless of scenario for the table view
-  const { data: assets, isLoading, error } = useAssets(plannerId, 'ALL');
+  const { data: assets, isLoading, error } = useAssets(plannerId);
   const createAsset = useCreateAsset();
   const updateAsset = useUpdateAsset();
   const deleteAsset = useDeleteAsset();

@@ -67,10 +67,10 @@ const deleteAsset = async (id: string): Promise<void> => {
 }
 
 // Custom hooks
-export const useAssets = (plannerId: string, scenario: string = 'ALL') => {
+export const useAssets = (plannerId: string) => {
   return useQuery({
-    queryKey: ['assets', plannerId, scenario],
-    queryFn: () => fetchAssets(plannerId, scenario),
+    queryKey: ['assets', plannerId], // Remove scenario from query key to always fetch all assets
+    queryFn: () => fetchAssets(plannerId, 'ALL'), // Always fetch ALL scenario data
     enabled: !!plannerId,
     retry: 1, // Only retry once
     retryDelay: 1000, // Wait 1 second before retry

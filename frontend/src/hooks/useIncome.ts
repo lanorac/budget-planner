@@ -35,7 +35,7 @@ export interface IncomeUpdate {
 // Fetch income
 export const useIncome = (plannerId: string) => {
   return useQuery({
-    queryKey: ['income', plannerId], // Remove scenario from query key to always fetch all income
+    queryKey: ['income', plannerId, 'v2'], // Add version to force cache invalidation
     queryFn: async (): Promise<Income[]> => {
       try {
         const response = await axios.get(`${API_BASE_URL}/api/v1/income`, {
@@ -50,6 +50,7 @@ export const useIncome = (plannerId: string) => {
       }
     },
     enabled: !!plannerId,
+    staleTime: 0, // Force refetch every time
   });
 };
 

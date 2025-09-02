@@ -43,14 +43,14 @@ export interface ExpenseUpdate {
 
 export const useExpenses = (plannerId: string) => {
   return useQuery({
-    queryKey: ['expenses', plannerId], // Remove scenario from query key to always fetch all expenses
+    queryKey: ['expenses', plannerId, 'v2'], // Add version to force cache invalidation
     queryFn: async (): Promise<Expense[]> => {
       const response = await axios.get(`${API_BASE_URL}/api/v1/expenses`, {
         params: { planner_id: plannerId, scenario: 'ALL' } // Always fetch ALL scenario data
       });
       return response.data;
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 0, // Force refetch every time
   });
 };
 

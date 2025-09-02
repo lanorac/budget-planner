@@ -41,7 +41,7 @@ export interface LiabilityUpdate {
 // Fetch liabilities
 export const useLiabilities = (plannerId: string) => {
   return useQuery({
-    queryKey: ['liabilities', plannerId], // Remove scenario from query key to always fetch all liabilities
+    queryKey: ['liabilities', plannerId, 'v2'], // Add version to force cache invalidation
     queryFn: async (): Promise<Liability[]> => {
       try {
         const response = await axios.get(`${API_BASE_URL}/api/v1/liabilities`, {
@@ -56,6 +56,7 @@ export const useLiabilities = (plannerId: string) => {
       }
     },
     enabled: !!plannerId,
+    staleTime: 0, // Force refetch every time
   });
 };
 

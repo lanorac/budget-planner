@@ -35,13 +35,15 @@ export interface UpdateAssetRequest {
 // API functions
 const fetchAssets = async (plannerId: string, scenario: string = 'ALL'): Promise<Asset[]> => {
   try {
+    console.log('🔍 Fetching assets with params:', { planner_id: plannerId, scenario })
     const response = await axios.get(`${API_BASE_URL}/api/v1/assets`, {
       params: { planner_id: plannerId, scenario },
       timeout: 5000 // 5 second timeout
     })
+    console.log('✅ Assets API response:', response.data)
     return response.data
   } catch (error) {
-    console.error('Error fetching assets:', error)
+    console.error('❌ Error fetching assets:', error)
     if (axios.isAxiosError(error)) {
       if (error.code === 'ECONNREFUSED' || error.message.includes('Network Error')) {
         throw new Error('Backend server is not running. Please start the backend server first.')
@@ -69,11 +71,12 @@ const deleteAsset = async (id: string): Promise<void> => {
 // Custom hooks
 export const useAssets = (plannerId: string) => {
   return useQuery({
-    queryKey: ['assets', plannerId], // Remove scenario from query key to always fetch all assets
+    queryKey: ['assets', plannerId, 'v2'], // Add version to force cache invalidation
     queryFn: () => fetchAssets(plannerId, 'ALL'), // Always fetch ALL scenario data
     enabled: !!plannerId,
     retry: 1, // Only retry once
     retryDelay: 1000, // Wait 1 second before retry
+    staleTime: 0, // Force refetch every time
   })
 }
 

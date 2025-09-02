@@ -16,11 +16,10 @@ interface IncomeCreate {
 
 interface IncomeTableProps {
   plannerId: string;
-  scenario?: string;
   onNavigateToTab?: (tabIndex: number) => void;
 }
 
-export const IncomeTable: React.FC<IncomeTableProps> = ({ plannerId, scenario = 'ALL' }) => {
+export const IncomeTable: React.FC<IncomeTableProps> = ({ plannerId }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<IncomeCreate>>({
@@ -31,7 +30,8 @@ export const IncomeTable: React.FC<IncomeTableProps> = ({ plannerId, scenario = 
     notes: ''
   });
 
-  const { data: incomeEntries, isLoading, error } = useIncome(plannerId, scenario);
+  // Always fetch all income regardless of scenario for the table view
+  const { data: incomeEntries, isLoading, error } = useIncome(plannerId, 'ALL');
   const createIncome = useCreateIncome();
   const updateIncome = useUpdateIncome();
   const deleteIncome = useDeleteIncome();

@@ -19,18 +19,18 @@ interface ExpenseCreate {
 
 interface ExpensesTableProps {
   plannerId: string;
-  scenario?: string;
   onNavigateToTab?: (tabIndex: number) => void;
 }
 
-export const ExpensesTable: React.FC<ExpensesTableProps> = ({ plannerId, scenario = 'ALL' }) => {
+export const ExpensesTable: React.FC<ExpensesTableProps> = ({ plannerId }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<ExpenseCreate>>({
     name: '', include_toggle: 'on', scenario: 'ALL', monthly_amount: 0, notes: ''
   });
 
-  const { data: expenses, isLoading, error } = useExpenses(plannerId, scenario);
+  // Always fetch all expenses regardless of scenario for the table view
+  const { data: expenses, isLoading, error } = useExpenses(plannerId, 'ALL');
   const createExpense = useCreateExpense();
   const updateExpense = useUpdateExpense();
   const deleteExpense = useDeleteExpense();

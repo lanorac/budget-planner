@@ -18,11 +18,10 @@ interface LiabilityCreate {
 
 interface LiabilitiesTableProps {
   plannerId: string;
-  scenario?: string;
   onNavigateToTab?: (tabIndex: number) => void;
 }
 
-export const LiabilitiesTable: React.FC<LiabilitiesTableProps> = ({ plannerId, scenario = 'ALL' }) => {
+export const LiabilitiesTable: React.FC<LiabilitiesTableProps> = ({ plannerId }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<LiabilityCreate>>({
@@ -34,7 +33,8 @@ export const LiabilitiesTable: React.FC<LiabilitiesTableProps> = ({ plannerId, s
     notes: ''
   });
 
-  const { data: liabilities, isLoading, error } = useLiabilities(plannerId, scenario);
+  // Always fetch all liabilities regardless of scenario for the table view
+  const { data: liabilities, isLoading, error } = useLiabilities(plannerId, 'ALL');
   const createLiability = useCreateLiability();
   const updateLiability = useUpdateLiability();
   const deleteLiability = useDeleteLiability();

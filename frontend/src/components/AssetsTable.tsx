@@ -16,18 +16,18 @@ interface AssetCreate {
 
 interface AssetsTableProps {
   plannerId: string;
-  scenario?: string;
   onNavigateToTab?: (tabIndex: number) => void;
 }
 
-export default function AssetsTable({ plannerId, scenario = 'ALL' }: AssetsTableProps) {
+export default function AssetsTable({ plannerId }: AssetsTableProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<AssetCreate>>({
     name: '', include_toggle: 'on', scenario: 'ALL', sale_value: 0, notes: ''
   });
 
-  const { data: assets, isLoading, error } = useAssets(plannerId, scenario);
+  // Always fetch all assets regardless of scenario for the table view
+  const { data: assets, isLoading, error } = useAssets(plannerId, 'ALL');
   const createAsset = useCreateAsset();
   const updateAsset = useUpdateAsset();
   const deleteAsset = useDeleteAsset();
@@ -144,11 +144,6 @@ export default function AssetsTable({ plannerId, scenario = 'ALL' }: AssetsTable
   }
 
   const assetsList = assets || []
-  
-  // Debug info
-  console.log('Assets data:', assets)
-  console.log('Assets list length:', assetsList.length)
-  console.log('Planner ID being used:', plannerId)
 
   // Prepare data for enhanced table
   const tableData: TableRow[] = assetsList.map(asset => ({
@@ -160,8 +155,6 @@ export default function AssetsTable({ plannerId, scenario = 'ALL' }: AssetsTable
     sale_value: asset.sale_value,
     notes: asset.notes || ''
   }));
-  
-  console.log('Table data:', tableData)
 
   // Prepare summary data
   const totalValue = assetsList.length > 0 

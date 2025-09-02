@@ -14,13 +14,18 @@ async def get_expenses(
     scenario: str = "ALL", 
     db: Session = Depends(get_db)
 ):
-    """Get all expenses for a planner, optionally filtered by scenario"""
-    query = db.query(Expense).filter(Expense.planner_id == planner_id)
-    
-    if scenario != "ALL":
-        query = query.filter(Expense.scenario == scenario)
-    
-    expenses = query.all()
+    """Get all expenses for a planner, filtered by scenario"""
+    if scenario == "ALL":
+        # For table view: show ALL expenses regardless of scenario
+        expenses = db.query(Expense).filter(
+            Expense.planner_id == planner_id
+        ).all()
+    else:
+        # For overview calculations: filter by specific scenario (including ALL scenario expenses)
+        expenses = db.query(Expense).filter(
+            Expense.planner_id == planner_id,
+            (Expense.scenario == "ALL") | (Expense.scenario == scenario)
+        ).all()
     return expenses
 
 @router.get("/expenses/{expense_id}", response_model=ExpenseResponse)

@@ -16,10 +16,17 @@ async def get_assets(
     db: Session = Depends(get_db)
 ):
     """Get all assets for a planner, filtered by scenario"""
-    assets = db.query(Asset).filter(
-        Asset.planner_id == planner_id,
-        (Asset.scenario == "ALL") | (Asset.scenario == scenario)
-    ).all()
+    if scenario == "ALL":
+        # For table view: show ALL assets regardless of scenario
+        assets = db.query(Asset).filter(
+            Asset.planner_id == planner_id
+        ).all()
+    else:
+        # For overview calculations: filter by specific scenario (including ALL scenario assets)
+        assets = db.query(Asset).filter(
+            Asset.planner_id == planner_id,
+            (Asset.scenario == "ALL") | (Asset.scenario == scenario)
+        ).all()
     return assets
 
 @router.post("/assets", response_model=AssetResponse)

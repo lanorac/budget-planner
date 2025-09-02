@@ -14,13 +14,18 @@ async def get_liabilities(
     scenario: str = "ALL", 
     db: Session = Depends(get_db)
 ):
-    """Get all liabilities for a planner, optionally filtered by scenario"""
-    query = db.query(Liability).filter(Liability.planner_id == planner_id)
-    
-    if scenario != "ALL":
-        query = query.filter(Liability.scenario == scenario)
-    
-    liabilities = query.all()
+    """Get all liabilities for a planner, filtered by scenario"""
+    if scenario == "ALL":
+        # For table view: show ALL liabilities regardless of scenario
+        liabilities = db.query(Liability).filter(
+            Liability.planner_id == planner_id
+        ).all()
+    else:
+        # For overview calculations: filter by specific scenario (including ALL scenario liabilities)
+        liabilities = db.query(Liability).filter(
+            Liability.planner_id == planner_id,
+            (Liability.scenario == "ALL") | (Liability.scenario == scenario)
+        ).all()
     return liabilities
 
 @router.get("/liabilities/{liability_id}", response_model=LiabilityResponse)

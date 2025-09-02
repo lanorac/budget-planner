@@ -14,13 +14,18 @@ async def get_income(
     scenario: str = "ALL", 
     db: Session = Depends(get_db)
 ):
-    """Get all income entries for a planner, optionally filtered by scenario"""
-    query = db.query(Income).filter(Income.planner_id == planner_id)
-    
-    if scenario != "ALL":
-        query = query.filter(Income.scenario == scenario)
-    
-    income_entries = query.all()
+    """Get all income entries for a planner, filtered by scenario"""
+    if scenario == "ALL":
+        # For table view: show ALL income regardless of scenario
+        income_entries = db.query(Income).filter(
+            Income.planner_id == planner_id
+        ).all()
+    else:
+        # For overview calculations: filter by specific scenario (including ALL scenario income)
+        income_entries = db.query(Income).filter(
+            Income.planner_id == planner_id,
+            (Income.scenario == "ALL") | (Income.scenario == scenario)
+        ).all()
     return income_entries
 
 @router.get("/income/{income_id}", response_model=IncomeResponse)

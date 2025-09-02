@@ -3,7 +3,7 @@ import { useAssets, useCreateAsset, useUpdateAsset, useDeleteAsset } from '../ho
 import EnhancedTable from './shared/EnhancedTable'
 import type { TableColumn, TableRow } from './shared/EnhancedTable'
 
-// Force refresh - v2 - Fixed scenario filtering and number formatting
+// Fixed scenario filtering and number formatting
 
 
 
@@ -34,8 +34,7 @@ export default function AssetsTable({ plannerId }: AssetsTableProps) {
   const updateAsset = useUpdateAsset();
   const deleteAsset = useDeleteAsset();
   
-  // Debug: Log what we're getting
-  console.log('🔍 AssetsTable - useAssets result:', { assets, isLoading, error, plannerId })
+
 
   // Define table columns
   const columns: TableColumn[] = [
@@ -169,12 +168,7 @@ export default function AssetsTable({ plannerId }: AssetsTableProps) {
       }, 0)
     : 0;
     
-  console.log('🔍 Summary calculation:', { 
-    assetsListLength: assetsList.length, 
-    totalValue, 
-    totalValueType: typeof totalValue,
-    formattedValue: `€${totalValue.toLocaleString()}`
-  })
+
     
   const summaryData = [
     { label: 'Total Assets', value: assetsList.length },

@@ -55,7 +55,7 @@ class ScenarioItem(Base, TimestampMixin):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     item_id = Column(UUID(as_uuid=True), nullable=False)  # ID of the asset/liability/income/expense/bill
     item_type = Column(String, nullable=False)  # 'asset', 'liability', 'income', 'expense', 'bill'
-    scenario_id = Column(String, nullable=False)  # References scenario_settings.scenario
+    scenario_id = Column(UUID(as_uuid=True), ForeignKey("scenario_settings.id"), nullable=False)  # References scenario_settings.id
     
     # Relationships
     scenario = relationship("ScenarioSettings", back_populates="scenario_items")

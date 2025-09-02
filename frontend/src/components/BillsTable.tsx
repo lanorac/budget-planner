@@ -6,8 +6,14 @@ import EnhancedTable from './shared/EnhancedTable'
 // Temporary planner ID for development - in real app this would come from context/auth
 const SAMPLE_PLANNER_ID = "550e8400-e29b-41d4-a716-446655440000"
 
-export default function BillsTable() {
-  const { data: bills = [], isLoading, error } = useBills(SAMPLE_PLANNER_ID)
+interface BillsTableProps {
+  plannerId?: string;
+  onNavigateToTab?: (tabIndex: number) => void;
+  scenarios?: Array<{ id: string; scenario: string; display_name: string }>;
+}
+
+export default function BillsTable({ plannerId = SAMPLE_PLANNER_ID, scenarios }: BillsTableProps) {
+  const { data: bills = [], isLoading, error } = useBills(plannerId)
   const createBill = useCreateBill()
   const updateBill = useUpdateBill()
   const deleteBill = useDeleteBill()
@@ -183,6 +189,7 @@ export default function BillsTable() {
             onRowAdd={handleAddNew}
             addButtonText="Add Bill"
             emptyMessage="No bills found. Add your first bill to get started."
+            scenarios={scenarios}
           />
         </div>
 
@@ -259,9 +266,11 @@ export default function BillsTable() {
                     required
                   >
                     <option value="ALL">All Scenarios</option>
-                    <option value="A">Scenario A</option>
-                    <option value="B">Scenario B</option>
-                    <option value="C">Scenario C</option>
+                    {scenarios?.map((scenario) => (
+                      <option key={scenario.id} value={scenario.scenario}>
+                        {scenario.display_name}
+                      </option>
+                    ))}
                   </select>
                 </div>
 

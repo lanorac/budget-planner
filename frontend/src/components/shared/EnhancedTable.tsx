@@ -24,6 +24,7 @@ interface EnhancedTableProps {
   addButtonText?: string
   emptyMessage?: string
   summaryData?: { label: string; value: string | number; color?: string }[]
+  scenarios?: Array<{ id: string; scenario: string; display_name: string }>
 }
 
 export default function EnhancedTable({
@@ -34,7 +35,8 @@ export default function EnhancedTable({
   onRowAdd,
   addButtonText = "Add New",
   emptyMessage = "No items found. Add your first item to get started.",
-  summaryData = []
+  summaryData = [],
+  scenarios = []
 }: EnhancedTableProps) {
   const [editingCell, setEditingCell] = useState<{ rowId: string; field: string } | null>(null)
   const [editValue, setEditValue] = useState<string>('')
@@ -153,9 +155,11 @@ export default function EnhancedTable({
             disabled={isUpdating}
           >
             <option value="ALL">All Scenarios</option>
-            <option value="A">Scenario A</option>
-            <option value="B">Scenario B</option>
-            <option value="C">Scenario C</option>
+            {scenarios.map((scenario) => (
+              <option key={scenario.id} value={scenario.scenario}>
+                {scenario.display_name}
+              </option>
+            ))}
           </select>
         )
       

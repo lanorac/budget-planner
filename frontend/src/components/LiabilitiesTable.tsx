@@ -19,9 +19,10 @@ interface LiabilityCreate {
 interface LiabilitiesTableProps {
   plannerId: string;
   onNavigateToTab?: (tabIndex: number) => void;
+  scenarios?: Array<{ id: string; scenario: string; display_name: string }>;
 }
 
-export const LiabilitiesTable: React.FC<LiabilitiesTableProps> = ({ plannerId }) => {
+export const LiabilitiesTable: React.FC<LiabilitiesTableProps> = ({ plannerId, scenarios }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<LiabilityCreate>>({
@@ -269,9 +270,11 @@ export const LiabilitiesTable: React.FC<LiabilitiesTableProps> = ({ plannerId })
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="ALL">All Scenarios</option>
-                <option value="A">Scenario A</option>
-                <option value="B">Scenario B</option>
-                <option value="C">Scenario C</option>
+                {scenarios?.map((scenario) => (
+                  <option key={scenario.id} value={scenario.scenario}>
+                    {scenario.display_name}
+                  </option>
+                ))}
               </select>
             </div>
             
@@ -315,6 +318,7 @@ export const LiabilitiesTable: React.FC<LiabilitiesTableProps> = ({ plannerId })
         addButtonText="Add Liability"
         emptyMessage="No liabilities found. Add your first liability to get started!"
         summaryData={summaryData}
+        scenarios={scenarios}
       />
     </div>
   );

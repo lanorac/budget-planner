@@ -17,9 +17,10 @@ interface IncomeCreate {
 interface IncomeTableProps {
   plannerId: string;
   onNavigateToTab?: (tabIndex: number) => void;
+  scenarios?: Array<{ id: string; scenario: string; display_name: string }>;
 }
 
-export const IncomeTable: React.FC<IncomeTableProps> = ({ plannerId }) => {
+export const IncomeTable: React.FC<IncomeTableProps> = ({ plannerId, scenarios }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<IncomeCreate>>({
@@ -251,9 +252,11 @@ export const IncomeTable: React.FC<IncomeTableProps> = ({ plannerId }) => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
               >
                 <option value="ALL">All Scenarios</option>
-                <option value="A">Scenario A</option>
-                <option value="B">Scenario B</option>
-                <option value="C">Scenario C</option>
+                {scenarios?.map((scenario) => (
+                  <option key={scenario.id} value={scenario.scenario}>
+                    {scenario.display_name}
+                  </option>
+                ))}
               </select>
             </div>
             
@@ -297,6 +300,7 @@ export const IncomeTable: React.FC<IncomeTableProps> = ({ plannerId }) => {
         addButtonText="Add Income"
         emptyMessage="No income entries found. Add your first income source to get started!"
         summaryData={summaryData}
+        scenarios={scenarios}
       />
     </div>
   );

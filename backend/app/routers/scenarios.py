@@ -73,7 +73,7 @@ async def delete_scenario(scenario_id: uuid.UUID, db: Session = Depends(get_db))
         raise HTTPException(status_code=404, detail="Scenario not found")
     
     # Delete all scenario items first
-    db.query(ScenarioItem).filter(ScenarioItem.scenario_id == db_scenario.scenario).delete()
+    db.query(ScenarioItem).filter(ScenarioItem.scenario_id == db_scenario.id).delete()
     
     # Delete the scenario
     db.delete(db_scenario)
@@ -96,7 +96,7 @@ async def add_item_to_scenario(
     existing = db.query(ScenarioItem).filter(
         ScenarioItem.item_id == item.item_id,
         ScenarioItem.item_type == item.item_type,
-        ScenarioItem.scenario_id == scenario.scenario
+        ScenarioItem.scenario_id == scenario.id
     ).first()
     
     if existing:
@@ -106,7 +106,7 @@ async def add_item_to_scenario(
     db_item = ScenarioItem(
         item_id=item.item_id,
         item_type=item.item_type,
-        scenario_id=scenario.scenario
+        scenario_id=scenario.id
     )
     db.add(db_item)
     db.commit()
@@ -130,7 +130,7 @@ async def remove_item_from_scenario(
     db_item = db.query(ScenarioItem).filter(
         ScenarioItem.item_id == item_id,
         ScenarioItem.item_type == item_type,
-        ScenarioItem.scenario_id == scenario.scenario
+        ScenarioItem.scenario_id == scenario.id
     ).first()
     
     if not db_item:

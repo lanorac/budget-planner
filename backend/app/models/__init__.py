@@ -1,6 +1,6 @@
 from .base import Base
 from .user import AppUser, Household, HouseholdMember
-from .planner import Planner, PlannerSettings, ScenarioSettings
+from .planner import Planner, PlannerSettings, ScenarioSettings, ScenarioItem
 from .categories import Category
 from .assets import Asset
 from .liabilities import Liability
@@ -11,6 +11,6 @@ from .bills import Bill
 __all__ = [
     "Base",
     "AppUser", "Household", "HouseholdMember",
-    "Planner", "PlannerSettings", "ScenarioSettings",
+    "Planner", "PlannerSettings", "ScenarioSettings", "ScenarioItem",
     "Category", "Asset", "Liability", "Income", "Expense", "Bill"
 ]

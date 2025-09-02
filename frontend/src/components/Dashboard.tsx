@@ -14,12 +14,12 @@ import { useScenarios } from '../hooks/useScenarios'
 const SAMPLE_PLANNER_ID = '550e8400-e29b-41d4-a716-446655440000'
 
 const tabs = [
-  { name: 'Overview', component: KPICards, icon: '📊' },
+  { name: 'Overview', component: KPICards, icon: '📊', props: { isOverview: true } },
   { name: 'Assets', component: AssetsTable, icon: '🏠', props: { plannerId: SAMPLE_PLANNER_ID } },
   { name: 'Liabilities', component: LiabilitiesTable, icon: '💳', props: { plannerId: SAMPLE_PLANNER_ID } },
   { name: 'Income', component: IncomeTable, icon: '💰', props: { plannerId: SAMPLE_PLANNER_ID } },
   { name: 'Expenses', component: ExpensesTable, icon: '📈', props: { plannerId: SAMPLE_PLANNER_ID } },
-  { name: 'Bills', component: BillsTable, icon: '📋' },
+  { name: 'Bills', component: BillsTable, icon: '📋', props: { plannerId: SAMPLE_PLANNER_ID } },
 ]
 
 export default function Dashboard() {
@@ -45,45 +45,7 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {/* Scenario Selector and Management */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <label htmlFor="scenario-select" className="text-sm font-medium text-gray-700">
-              Active Scenario:
-            </label>
-            <select
-              id="scenario-select"
-              value={selectedScenario}
-              onChange={(e) => setSelectedScenario(e.target.value)}
-              className="block w-full sm:w-48 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-            >
-              <option value="ALL">All Scenarios</option>
-              {scenarios.map((scenario) => (
-                <option key={scenario.id} value={scenario.scenario}>
-                  {scenario.display_name}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <button
-            onClick={() => setIsScenarioModalOpen(true)}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            Add/Edit Scenarios
-          </button>
-        </div>
-        
-        {selectedScenario !== 'ALL' && (
-          <div className="mt-4 p-3 bg-blue-50 rounded-md">
-            <p className="text-sm text-blue-800">
-              <strong>Note:</strong> The Overview tab will show calculations filtered by the selected scenario. 
-              All other tabs will display all data for editing purposes.
-            </p>
-          </div>
-        )}
-      </div>
+
 
       {/* Tabbed interface */}
       <Tab.Group selectedIndex={selectedTabIndex} onChange={handleTabChange}>
@@ -113,7 +75,12 @@ export default function Dashboard() {
                 {...(tab.props || {})} 
                 plannerId={tab.props?.plannerId || SAMPLE_PLANNER_ID}
                 onNavigateToTab={handleTabChange} 
-                selectedScenario={selectedScenario}
+                scenarios={scenarios}
+                {...(tab.props?.isOverview ? {
+                  selectedScenario,
+                  onScenarioChange: setSelectedScenario,
+                  onOpenScenarioModal: () => setIsScenarioModalOpen(true)
+                } : {})}
               />
             </Tab.Panel>
           ))}

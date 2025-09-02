@@ -19,9 +19,10 @@ interface AssetCreate {
 interface AssetsTableProps {
   plannerId: string;
   onNavigateToTab?: (tabIndex: number) => void;
+  scenarios?: Array<{ id: string; scenario: string; display_name: string }>;
 }
 
-export default function AssetsTable({ plannerId }: AssetsTableProps) {
+export default function AssetsTable({ plannerId, scenarios }: AssetsTableProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<AssetCreate>>({
@@ -235,9 +236,11 @@ export default function AssetsTable({ plannerId }: AssetsTableProps) {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="ALL">All Scenarios</option>
-                <option value="A">Scenario A</option>
-                <option value="B">Scenario B</option>
-                <option value="C">Scenario C</option>
+                {scenarios?.map((scenario) => (
+                  <option key={scenario.id} value={scenario.scenario}>
+                    {scenario.display_name}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -281,6 +284,7 @@ export default function AssetsTable({ plannerId }: AssetsTableProps) {
         addButtonText="Add Asset"
         emptyMessage="No assets found. Add your first asset to get started."
         summaryData={summaryData}
+        scenarios={scenarios}
       />
     </div>
   )

@@ -27,7 +27,7 @@ class ScenarioResponse(ScenarioBase):
 class ScenarioItemBase(BaseModel):
     item_id: uuid.UUID
     item_type: str = Field(..., pattern="^(asset|liability|income|expense|bill)$")
-    scenario_id: str = Field(..., pattern="^[A-Z0-9]+$")
+    scenario_id: uuid.UUID
 
 class ScenarioItemCreate(ScenarioItemBase):
     pass

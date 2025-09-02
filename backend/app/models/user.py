@@ -17,7 +17,7 @@ class AppUser(Base, TimestampMixin):
     # Relationships
     households = relationship("Household", back_populates="owner")
     household_memberships = relationship("HouseholdMember", back_populates="user")
-    planners = relationship("Planner", back_populates="owner")
+    planners = relationship("Planner", back_populates="owner_user")
 
 class Household(Base, TimestampMixin):
     __tablename__ = "households"

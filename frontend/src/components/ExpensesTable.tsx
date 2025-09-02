@@ -20,9 +20,10 @@ interface ExpenseCreate {
 interface ExpensesTableProps {
   plannerId: string;
   onNavigateToTab?: (tabIndex: number) => void;
+  scenarios?: Array<{ id: string; scenario: string; display_name: string }>;
 }
 
-export const ExpensesTable: React.FC<ExpensesTableProps> = ({ plannerId }) => {
+export const ExpensesTable: React.FC<ExpensesTableProps> = ({ plannerId, scenarios }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<ExpenseCreate>>({
@@ -230,9 +231,11 @@ export const ExpensesTable: React.FC<ExpensesTableProps> = ({ plannerId }) => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="ALL">All Scenarios</option>
-                <option value="A">Scenario A</option>
-                <option value="B">Scenario B</option>
-                <option value="C">Scenario C</option>
+                {scenarios?.map((scenario) => (
+                  <option key={scenario.id} value={scenario.scenario}>
+                    {scenario.display_name}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -276,6 +279,7 @@ export const ExpensesTable: React.FC<ExpensesTableProps> = ({ plannerId }) => {
         addButtonText="Add Expense"
         emptyMessage="No expenses found. Add your first expense to get started."
         summaryData={summaryData}
+        scenarios={scenarios}
       />
     </div>
   );

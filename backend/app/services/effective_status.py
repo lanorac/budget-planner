@@ -142,9 +142,9 @@ class EffectiveStatusService:
             END = 'on'
         """)
         
-        # Get effective bills
+        # Get effective bills using monthly_average for accurate monthly totals
         bills_query = text("""
-            SELECT COALESCE(SUM(b.monthly_amount), 0) as total_bills
+            SELECT COALESCE(SUM(b.monthly_average), 0) as total_bills
             FROM bills b
             LEFT JOIN assets a ON b.linked_asset_id = a.id
             LEFT JOIN liabilities l ON b.linked_liab_id = l.id

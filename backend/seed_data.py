@@ -219,14 +219,17 @@ def create_seed_data():
         )
         db.add(gas)
         
-        # Create bills
+        # Create bills with enhanced interval structure
         electricity = Bill(
             id=uuid.uuid4(),
             planner_id=planner.id,
             name="Electricity Bill",
             include_toggle="on",
             scenario="ALL",
-            monthly_amount=Decimal("150.00"),
+            bill_amount=Decimal("150.00"),
+            interval_months=1,
+            monthly_average=Decimal("150.00"),
+            monthly_amount=Decimal("150.00"),  # Legacy field
             category_id=categories[2].id,  # Utilities category
             linked_asset_id=house.id,
             notes="Monthly electricity"
@@ -239,11 +242,47 @@ def create_seed_data():
             name="Internet & Phone",
             include_toggle="on",
             scenario="ALL",
-            monthly_amount=Decimal("80.00"),
+            bill_amount=Decimal("80.00"),
+            interval_months=1,
+            monthly_average=Decimal("80.00"),
+            monthly_amount=Decimal("80.00"),  # Legacy field
             category_id=categories[2].id,  # Utilities category
             notes="Internet and phone service"
         )
         db.add(internet)
+        
+        # Add some bills with different intervals for testing
+        insurance = Bill(
+            id=uuid.uuid4(),
+            planner_id=planner.id,
+            name="Home Insurance",
+            include_toggle="on",
+            scenario="ALL",
+            bill_amount=Decimal("1200.00"),
+            interval_months=12,
+            monthly_average=Decimal("100.00"),
+            monthly_amount=Decimal("100.00"),  # Legacy field
+            category_id=categories[0].id,  # Housing category
+            linked_asset_id=house.id,
+            notes="Annual home insurance premium"
+        )
+        db.add(insurance)
+        
+        property_tax = Bill(
+            id=uuid.uuid4(),
+            planner_id=planner.id,
+            name="Property Tax",
+            include_toggle="on",
+            scenario="ALL",
+            bill_amount=Decimal("2400.00"),
+            interval_months=12,
+            monthly_average=Decimal("200.00"),
+            monthly_amount=Decimal("200.00"),  # Legacy field
+            category_id=categories[0].id,  # Housing category
+            linked_asset_id=house.id,
+            notes="Annual property tax"
+        )
+        db.add(property_tax)
         
         # Commit all changes
         db.commit()
@@ -254,7 +293,7 @@ def create_seed_data():
         print(f"💳 Created liabilities: Mortgage (€1,200/month), Car Loan (€300/month)")
         print(f"💰 Created income: Salary (€4,000/month)")
         print(f"📈 Created expenses: Groceries (€600/month), Gas (€200/month)")
-        print(f"📋 Created bills: Electricity (€150/month), Internet (€80/month)")
+        print(f"📋 Created bills: Electricity (€150/month), Internet (€80/month), Insurance (€1200/year), Property Tax (€2400/year)")
         print(f"🏷️  Created categories: Housing, Transportation, Utilities, Food, Entertainment")
         
     except Exception as e:

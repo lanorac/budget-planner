@@ -145,8 +145,10 @@ export default function AssetsTable({ plannerId, scenario = 'ALL' }: AssetsTable
 
   const assetsList = assets || []
   
+  // Debug info
   console.log('Assets data:', assets)
-  console.log('Assets list:', assetsList)
+  console.log('Assets list length:', assetsList.length)
+  console.log('Planner ID being used:', plannerId)
 
   // Prepare data for enhanced table
   const tableData: TableRow[] = assetsList.map(asset => ({
@@ -162,9 +164,13 @@ export default function AssetsTable({ plannerId, scenario = 'ALL' }: AssetsTable
   console.log('Table data:', tableData)
 
   // Prepare summary data
+  const totalValue = assetsList.length > 0 
+    ? assetsList.reduce((sum, asset) => sum + (asset.sale_value || 0), 0)
+    : 0;
+    
   const summaryData = [
     { label: 'Total Assets', value: assetsList.length },
-    { label: 'Total Value', value: `€${assetsList.reduce((sum, asset) => sum + (asset.sale_value || 0), 0).toLocaleString()}` },
+    { label: 'Total Value', value: `€${totalValue.toLocaleString()}` },
     { label: 'Active Sales', value: assetsList.filter(asset => asset.include_toggle === 'on').length, color: 'text-green-600' }
   ];
 

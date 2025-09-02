@@ -48,9 +48,9 @@ def create_seed_data():
         db.add(member)
         db.flush()
         
-        # Create planner
+        # Create planner with consistent ID for frontend testing
         planner = Planner(
-            id=uuid.uuid4(),
+            id=uuid.UUID('550e8400-e29b-41d4-a716-446655440000'),
             name="Main Budget Plan",
             household_id=household.id,
             owner_user_id=user.id

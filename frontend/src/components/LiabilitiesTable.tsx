@@ -186,9 +186,13 @@ export const LiabilitiesTable: React.FC<LiabilitiesTableProps> = ({ plannerId, s
   }));
 
   // Prepare summary data
+  const totalMonthlyCost = liabilitiesList.length > 0 
+    ? liabilitiesList.reduce((sum, liability) => sum + (liability.monthly_cost || 0), 0)
+    : 0;
+    
   const summaryData = [
     { label: 'Total Liabilities', value: liabilitiesList.length },
-    { label: 'Total Monthly Cost', value: `€${liabilitiesList.reduce((sum, liability) => sum + (liability.monthly_cost || 0), 0).toLocaleString()}` },
+    { label: 'Total Monthly Cost', value: `€${totalMonthlyCost.toLocaleString()}` },
     { label: 'Active Liabilities', value: liabilitiesList.filter(liability => liability.include_toggle === 'on').length, color: 'text-green-600' }
   ];
 

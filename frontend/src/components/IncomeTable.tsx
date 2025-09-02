@@ -179,9 +179,13 @@ export const IncomeTable: React.FC<IncomeTableProps> = ({ plannerId, scenario = 
   }));
 
   // Prepare summary data
+  const totalMonthlyIncome = incomeList.length > 0 
+    ? incomeList.reduce((sum, income) => sum + (income.monthly_amount || 0), 0)
+    : 0;
+    
   const summaryData = [
     { label: 'Total Income Sources', value: incomeList.length },
-    { label: 'Total Monthly Income', value: `€${incomeList.reduce((sum, income) => sum + (income.monthly_amount || 0), 0).toLocaleString()}` },
+    { label: 'Total Monthly Income', value: `€${totalMonthlyIncome.toLocaleString()}` },
     { label: 'Active Income', value: incomeList.filter(income => income.include_toggle === 'on').length, color: 'text-green-600' }
   ];
 

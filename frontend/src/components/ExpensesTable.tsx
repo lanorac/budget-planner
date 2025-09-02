@@ -158,9 +158,13 @@ export const ExpensesTable: React.FC<ExpensesTableProps> = ({ plannerId, scenari
   }));
 
   // Prepare summary data
+  const totalMonthlyAmount = expensesList.length > 0 
+    ? expensesList.reduce((sum, expense) => sum + (expense.monthly_amount || 0), 0)
+    : 0;
+    
   const summaryData = [
     { label: 'Total Expenses', value: expensesList.length },
-    { label: 'Total Monthly Amount', value: `€${expensesList.reduce((sum, expense) => sum + (expense.monthly_amount || 0), 0).toLocaleString()}` },
+    { label: 'Total Monthly Amount', value: `€${totalMonthlyAmount.toLocaleString()}` },
     { label: 'Active Expenses', value: expensesList.filter(expense => expense.include_toggle === 'on').length, color: 'text-green-600' }
   ];
 

@@ -172,7 +172,7 @@ export const IncomeTable: React.FC<IncomeTableProps> = ({ plannerId }) => {
   const tableData: TableRow[] = incomeList.map(income => ({
     id: income.id,
     name: income.name,
-    monthly_amount: income.monthly_amount,
+    monthly_amount: typeof income.monthly_amount === 'string' ? parseFloat(income.monthly_amount) : income.monthly_amount,
     include_toggle: income.include_toggle,
     scenario: income.scenario,
     notes: income.notes || ''
@@ -180,7 +180,10 @@ export const IncomeTable: React.FC<IncomeTableProps> = ({ plannerId }) => {
 
   // Prepare summary data
   const totalMonthlyIncome = incomeList.length > 0 
-    ? incomeList.reduce((sum, income) => sum + (income.monthly_amount || 0), 0)
+    ? incomeList.reduce((sum, income) => {
+        const value = typeof income.monthly_amount === 'string' ? parseFloat(income.monthly_amount) : income.monthly_amount;
+        return sum + (value || 0);
+      }, 0)
     : 0;
     
   const summaryData = [

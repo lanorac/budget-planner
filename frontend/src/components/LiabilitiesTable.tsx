@@ -178,8 +178,8 @@ export const LiabilitiesTable: React.FC<LiabilitiesTableProps> = ({ plannerId })
   const tableData: TableRow[] = liabilitiesList.map(liability => ({
     id: liability.id,
     name: liability.name,
-    monthly_cost: liability.monthly_cost,
-    principal: liability.principal || 0,
+    monthly_cost: typeof liability.monthly_cost === 'string' ? parseFloat(liability.monthly_cost) : liability.monthly_cost,
+    principal: typeof liability.principal === 'string' ? parseFloat(liability.principal) : (liability.principal || 0),
     include_toggle: liability.include_toggle,
     scenario: liability.scenario,
     notes: liability.notes || ''
@@ -187,7 +187,10 @@ export const LiabilitiesTable: React.FC<LiabilitiesTableProps> = ({ plannerId })
 
   // Prepare summary data
   const totalMonthlyCost = liabilitiesList.length > 0 
-    ? liabilitiesList.reduce((sum, liability) => sum + (liability.monthly_cost || 0), 0)
+    ? liabilitiesList.reduce((sum, liability) => {
+        const value = typeof liability.monthly_cost === 'string' ? parseFloat(liability.monthly_cost) : liability.monthly_cost;
+        return sum + (value || 0);
+      }, 0)
     : 0;
     
   const summaryData = [

@@ -151,7 +151,7 @@ export const ExpensesTable: React.FC<ExpensesTableProps> = ({ plannerId }) => {
   const tableData: TableRow[] = expensesList.map(expense => ({
     id: expense.id,
     name: expense.name,
-    monthly_amount: expense.monthly_amount,
+    monthly_amount: typeof expense.monthly_amount === 'string' ? parseFloat(expense.monthly_amount) : expense.monthly_amount,
     include_toggle: expense.include_toggle,
     scenario: expense.scenario,
     notes: expense.notes || ''
@@ -159,7 +159,10 @@ export const ExpensesTable: React.FC<ExpensesTableProps> = ({ plannerId }) => {
 
   // Prepare summary data
   const totalMonthlyAmount = expensesList.length > 0 
-    ? expensesList.reduce((sum, expense) => sum + (expense.monthly_amount || 0), 0)
+    ? expensesList.reduce((sum, expense) => {
+        const value = typeof expense.monthly_amount === 'string' ? parseFloat(expense.monthly_amount) : expense.monthly_amount;
+        return sum + (value || 0);
+      }, 0)
     : 0;
     
   const summaryData = [

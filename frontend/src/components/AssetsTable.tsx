@@ -157,13 +157,16 @@ export default function AssetsTable({ plannerId }: AssetsTableProps) {
     name: asset.name,
     include_toggle: asset.include_toggle,
     scenario: asset.scenario,
-    sale_value: asset.sale_value,
+    sale_value: typeof asset.sale_value === 'string' ? parseFloat(asset.sale_value) : asset.sale_value,
     notes: asset.notes || ''
   }));
 
   // Prepare summary data
   const totalValue = assetsList.length > 0 
-    ? assetsList.reduce((sum, asset) => sum + (asset.sale_value || 0), 0)
+    ? assetsList.reduce((sum, asset) => {
+        const value = typeof asset.sale_value === 'string' ? parseFloat(asset.sale_value) : asset.sale_value;
+        return sum + (value || 0);
+      }, 0)
     : 0;
     
   console.log('🔍 Summary calculation:', { 

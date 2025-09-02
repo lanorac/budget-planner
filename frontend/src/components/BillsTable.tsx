@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useBills, useCreateBill, useUpdateBill, useDeleteBill, type Bill, type BillCreate } from '../hooks/useBills'
 import type { TableColumn, TableRow } from './shared/EnhancedTable'
 import EnhancedTable from './shared/EnhancedTable'
@@ -22,7 +22,7 @@ export default function BillsTable() {
     interval_months: 1,
     category_id: undefined,
     linked_asset_id: undefined,
-    linked_liability_id: undefined,
+    linked_liab_id: undefined,
     notes: '',
     planner_id: SAMPLE_PLANNER_ID
   })
@@ -37,7 +37,7 @@ export default function BillsTable() {
       interval_months: 1,
       category_id: undefined,
       linked_asset_id: undefined,
-      linked_liability_id: undefined,
+      linked_liab_id: undefined,
       notes: '',
       planner_id: SAMPLE_PLANNER_ID
     })
@@ -54,7 +54,7 @@ export default function BillsTable() {
       interval_months: bill.interval_months,
       category_id: bill.category_id,
       linked_asset_id: bill.linked_asset_id,
-      linked_liability_id: bill.linked_liability_id,
+      linked_liab_id: bill.linked_liab_id,
       notes: bill.notes || '',
       planner_id: bill.planner_id
     })
@@ -93,30 +93,31 @@ export default function BillsTable() {
     name: bill.name,
     include_toggle: bill.include_toggle,
     scenario: bill.scenario,
-    bill_amount: bill.bill_amount,
-    interval_months: bill.interval_months,
-    monthly_average: bill.monthly_average,
+    bill_amount: Number(bill.bill_amount) || 0,
+    interval_months: Number(bill.interval_months) || 1,
+    monthly_average: Number(bill.monthly_average) || 0,
     notes: bill.notes || ''
   }))
 
-  // Prepare summary data
-  const totalMonthlyAverage = billsList.length > 0
-    ? billsList.reduce((sum, bill) => sum + (bill.monthly_average || 0), 0)
-    : 0
+  // Prepare summary data - ensure we're working with numbers
+  const totalMonthlyAverage = billsList.reduce((sum, bill) => {
+    const monthlyAvg = Number(bill.monthly_average) || 0
+    return sum + monthlyAvg
+  }, 0)
 
-  const totalBillAmount = billsList.length > 0
-    ? billsList.reduce((sum, bill) => sum + (bill.bill_amount || 0), 0)
-    : 0
+  const totalBillAmount = billsList.reduce((sum, bill) => {
+    const billAmount = Number(bill.bill_amount) || 0
+    return sum + billAmount
+  }, 0)
 
   const columns: TableColumn[] = [
     { key: 'name', label: 'Bill Name', type: 'text', editable: true },
     { key: 'bill_amount', label: 'Bill Amount', type: 'currency', editable: true },
     { key: 'interval_months', label: 'Interval (Months)', type: 'number', editable: true },
     { key: 'monthly_average', label: 'Monthly Average', type: 'currency', editable: false },
-    { key: 'include_toggle', label: 'Include', type: 'toggle', editable: true },
-    { key: 'scenario', label: 'Scenario', type: 'select', editable: true, options: ['ALL', 'A', 'B', 'C'] },
-    { key: 'notes', label: 'Notes', type: 'text', editable: true },
-    { key: 'actions', label: 'Actions', type: 'actions', editable: false }
+    { key: 'include_toggle', label: 'Include', type: 'checkbox', editable: true },
+    { key: 'scenario', label: 'Scenario', type: 'scenario', editable: true },
+    { key: 'notes', label: 'Notes', type: 'text', editable: true }
   ]
 
   if (isLoading) {
@@ -183,20 +184,22 @@ export default function BillsTable() {
         </div>
       </div>
 
-      <div className="mt-8">
-        <EnhancedTable
-          data={billsList}
-          columns={columns}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onSave={async (id, field, value) => {
-            const bill = bills.find(b => b.id === id)
-            if (bill) {
-              await updateBill.mutateAsync({ id, [field]: value })
-            }
-          }}
-        />
-      </div>
+              <div className="mt-8">
+          <EnhancedTable
+            columns={columns}
+            data={billsList}
+            onRowUpdate={async (id: string, field: string, value: any) => {
+              const bill = bills.find(b => b.id === id)
+              if (bill) {
+                await updateBill.mutateAsync({ id, [field]: value })
+              }
+            }}
+            onRowDelete={handleDelete}
+            onRowAdd={handleAddNew}
+            addButtonText="Add Bill"
+            emptyMessage="No bills found. Add your first bill to get started."
+          />
+        </div>
 
       {/* Add/Edit Bill Form Modal */}
       {isFormOpen && (

@@ -16,7 +16,7 @@ class BillBase(BaseModel):
     # Optional fields
     category_id: Optional[uuid.UUID] = None
     linked_asset_id: Optional[uuid.UUID] = None
-    linked_liability_id: Optional[uuid.UUID] = None
+    linked_liab_id: Optional[uuid.UUID] = None
     notes: Optional[str] = None
     
     @computed_field
@@ -38,13 +38,12 @@ class BillUpdate(BaseModel):
     interval_months: Optional[int] = Field(None, ge=1, le=12)
     category_id: Optional[uuid.UUID] = None
     linked_asset_id: Optional[uuid.UUID] = None
-    linked_liability_id: Optional[uuid.UUID] = None
+    linked_liab_id: Optional[uuid.UUID] = None
     notes: Optional[str] = None
 
 class BillResponse(BillBase):
     id: uuid.UUID
     planner_id: uuid.UUID
-    monthly_average: Decimal  # Include the calculated field in response
     created_at: datetime
     updated_at: datetime
     

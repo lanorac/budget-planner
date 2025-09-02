@@ -13,7 +13,7 @@ export interface Bill {
   monthly_average: number
   category_id?: string
   linked_asset_id?: string
-  linked_liability_id?: string
+  linked_liab_id?: string
   notes?: string
   planner_id: string
   created_at: string
@@ -28,7 +28,7 @@ export interface BillCreate {
   interval_months: number
   category_id?: string
   linked_asset_id?: string
-  linked_liability_id?: string
+  linked_liab_id?: string
   notes?: string
   planner_id: string
 }
@@ -41,7 +41,7 @@ export interface BillUpdate {
   interval_months?: number
   category_id?: string
   linked_asset_id?: string
-  linked_liability_id?: string
+  linked_liab_id?: string
   notes?: string
 }
 
